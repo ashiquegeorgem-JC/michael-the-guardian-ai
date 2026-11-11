@@ -1,0 +1,10 @@
+2026-11-03T03:15:01.002Z nginx [INFO] 192.168.1.50 - - [03/Nov/2026:03:15:01 +0000] "GET /api/v1/products HTTP/1.1" 200 1420 "https://app.corp.io" "Mozilla/5.0"
+2026-11-03T03:15:04.112Z nginx [INFO] 192.168.1.50 - - [03/Nov/2026:03:15:04 +0000] "GET /api/v1/products?category=electronics HTTP/1.1" 200 890 "https://app.corp.io" "Mozilla/5.0"
+2026-11-03T03:15:10.420Z nginx [WARNING] 203.0.113.88 - - [03/Nov/2026:03:15:10 +0000] "GET /api/v1/users?id=1' UNION SELECT null,username,password_hash FROM users-- HTTP/1.1" 500 240 "-" "sqlmap/1.6#stable"
+2026-11-03T03:15:11.110Z api-gateway [ERROR] Database query syntax error near '' UNION SELECT null,username,password_hash FROM users--': Postgres Error 42601
+2026-11-03T03:15:12.809Z nginx [WARNING] 203.0.113.88 - - [03/Nov/2026:03:15:12 +0000] "GET /api/v1/users?id=1' AND 1=1-- HTTP/1.1" 200 480 "-" "sqlmap/1.6#stable"
+2026-11-03T03:15:14.215Z nginx [CRITICAL] 203.0.113.88 - - [03/Nov/2026:03:15:14 +0000] "POST /api/v1/auth/login HTTP/1.1" 500 512 "-" "sqlmap/1.6#stable" payload: admin' OR '1'='1' --
+2026-11-03T03:15:16.002Z waf-shield [CRITICAL] High severity WAF rule violation: SQL Injection Pattern matched Rule ID 942100 from IP 203.0.113.88
+2026-11-03T03:15:18.441Z nginx [WARNING] 203.0.113.88 - - [03/Nov/2026:03:15:18 +0000] "GET /../../../../etc/passwd HTTP/1.1" 400 150 "-" "curl/7.81.0"
+2026-11-03T03:15:20.912Z waf-shield [CRITICAL] Path traversal signature detected: ../../../../etc/passwd block action taken against 203.0.113.88
+2026-11-03T03:15:25.300Z nginx [INFO] 192.168.1.22 - - [03/Nov/2026:03:15:25 +0000] "GET /healthz HTTP/1.1" 200 12 "-" "kube-probe/1.28"

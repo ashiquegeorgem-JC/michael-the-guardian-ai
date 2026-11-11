@@ -1,0 +1,134 @@
+{
+  "benchmark_timestamp": "2026-11-03T06:34:29.663803Z",
+  "dataset_metadata": {
+    "total_samples": 190,
+    "normal_samples": 120,
+    "anomalous_samples": 70,
+    "anomaly_ratio": 0.3684,
+    "test_dataset_path": "backend/data/research/test_logs.csv",
+    "classes_evaluated": 10
+  },
+  "model_comparison": {
+    "Isolation Forest": {
+      "model_name": "Isolation Forest (Unsupervised)",
+      "true_positive": 63,
+      "true_negative": 116,
+      "false_positive": 4,
+      "false_negative": 7,
+      "accuracy": 0.9421,
+      "precision": 0.9403,
+      "recall": 0.9,
+      "f1_score": 0.9197,
+      "false_positive_rate": 0.0333,
+      "roc_auc": 0.9865
+    },
+    "Statistical Z-Score": {
+      "model_name": "Statistical Z-Score Detection",
+      "true_positive": 3,
+      "true_negative": 120,
+      "false_positive": 0,
+      "false_negative": 67,
+      "accuracy": 0.6474,
+      "precision": 1.0,
+      "recall": 0.0429,
+      "f1_score": 0.0822,
+      "false_positive_rate": 0.0,
+      "roc_auc": 0.9839
+    },
+    "Rule-Based": {
+      "model_name": "Rule-Based Heuristic Detection",
+      "true_positive": 20,
+      "true_negative": 120,
+      "false_positive": 0,
+      "false_negative": 50,
+      "accuracy": 0.7368,
+      "precision": 1.0,
+      "recall": 0.2857,
+      "f1_score": 0.4444,
+      "false_positive_rate": 0.0,
+      "roc_auc": 0.6429
+    },
+    "Hybrid Ensemble": {
+      "model_name": "Hybrid Multi-Model Ensemble (MICHAEL)",
+      "true_positive": 64,
+      "true_negative": 115,
+      "false_positive": 5,
+      "false_negative": 6,
+      "accuracy": 0.9421,
+      "precision": 0.9275,
+      "recall": 0.9143,
+      "f1_score": 0.9209,
+      "false_positive_rate": 0.0417,
+      "roc_auc": 0.9927
+    }
+  },
+  "category_breakdown": {
+    "abnormal_auth": {
+      "total_samples": 8,
+      "detected_anomalies": 7,
+      "recall": 0.875,
+      "is_anomaly_class": true
+    },
+    "database_failure": {
+      "total_samples": 8,
+      "detected_anomalies": 8,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    },
+    "normal_activity": {
+      "total_samples": 120,
+      "detected_anomalies": 5,
+      "recall": 0.0417,
+      "is_anomaly_class": false
+    },
+    "novel_unseen_pattern": {
+      "total_samples": 6,
+      "detected_anomalies": 6,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    },
+    "outbound_c2": {
+      "total_samples": 8,
+      "detected_anomalies": 8,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    },
+    "path_traversal": {
+      "total_samples": 6,
+      "detected_anomalies": 6,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    },
+    "resource_exhaustion": {
+      "total_samples": 8,
+      "detected_anomalies": 3,
+      "recall": 0.375,
+      "is_anomaly_class": true
+    },
+    "sql_injection": {
+      "total_samples": 8,
+      "detected_anomalies": 8,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    },
+    "ssh_bruteforce": {
+      "total_samples": 10,
+      "detected_anomalies": 10,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    },
+    "traffic_spike": {
+      "total_samples": 8,
+      "detected_anomalies": 8,
+      "recall": 1.0,
+      "is_anomaly_class": true
+    }
+  },
+  "visual_artifacts": {
+    "confusion_matrices": "/eval/confusion_matrices.png",
+    "roc_curves": "/eval/roc_curves.png",
+    "precision_recall_comparison": "/eval/precision_recall_comparison.png",
+    "anomaly_score_distribution": "/eval/anomaly_score_distribution.png",
+    "feature_space_projection": "/eval/feature_space_projection.png"
+  }
+}
