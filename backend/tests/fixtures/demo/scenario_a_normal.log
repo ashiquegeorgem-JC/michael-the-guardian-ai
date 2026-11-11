@@ -1,0 +1,11 @@
+2026-11-10T10:00:01Z web-01 nginx[101]: 192.168.1.50 - - [10/Nov/2026:10:00:01 +0000] "GET /index.html HTTP/1.1" 200 4523 "https://company.internal" "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+2026-11-10T10:00:05Z web-01 nginx[102]: 192.168.1.51 - - [10/Nov/2026:10:00:05 +0000] "GET /static/css/main.css HTTP/1.1" 200 1205 "https://company.internal/index.html" "Mozilla/5.0"
+2026-11-10T10:00:10Z auth-01 sshd[201]: Accepted publickey for backup_admin from 10.0.1.25 port 54112 ssh2
+2026-11-10T10:00:15Z web-01 nginx[103]: 192.168.1.52 - - [10/Nov/2026:10:00:15 +0000] "GET /api/v1/health HTTP/1.1" 200 24 "-" "Internal-Monitor/1.0"
+2026-11-10T10:00:20Z app-01 systemd[1]: Starting Daily system log rotation...
+2026-11-10T10:00:22Z app-01 systemd[1]: logrotate.service: Deactivated successfully.
+2026-11-10T10:00:30Z cron-01 systemd[1]: Routine database backup job completed successfully.
+2026-11-10T10:00:45Z web-01 nginx[104]: 192.168.1.50 - - [10/Nov/2026:10:00:45 +0000] "GET /dashboard HTTP/1.1" 200 8921 "https://company.internal/index.html" "Mozilla/5.0"
+2026-11-10T10:01:00Z auth-01 sudo[301]: backup_admin : TTY=pts/0 ; PWD=/home/backup_admin ; USER=root ; COMMAND=/usr/bin/rsync -a /var/log /backup/
+2026-11-10T10:01:15Z web-01 nginx[105]: 192.168.1.55 - - [10/Nov/2026:10:01:15 +0000] "GET /favicon.ico HTTP/1.1" 200 318 "-" "Mozilla/5.0"
+

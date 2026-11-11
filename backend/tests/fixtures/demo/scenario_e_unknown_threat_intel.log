@@ -1,0 +1,5 @@
+2026-11-10T16:00:00Z edge-01 firewall[301]: Packet dropped from unlisted public IP 192.0.2.254 on interface eth0
+2026-11-10T16:00:15Z edge-01 app-daemon[502]: Connection attempt to unrecognized service port 9999 from 192.0.2.254
+2026-11-10T16:00:30Z edge-01 app-daemon[503]: TCP handshake reset for 192.0.2.254: unknown protocol signature
+2026-11-10T16:00:45Z edge-01 dns[102]: Query for newly-registered-unseen-domain.xyz from 192.0.2.254
+

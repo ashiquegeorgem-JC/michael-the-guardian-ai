@@ -1,0 +1,9 @@
+2026-11-10T12:00:00Z gw-firewall kernel: [UFW BLOCK] IN=eth0 OUT=eth1 SRC=192.168.1.100 DST=203.0.113.15 PROTO=TCP SPT=49152 DPT=4444 SYN
+2026-11-10T12:00:15Z host-node app[901]: Process 'system-update' spawned outbound socket to 203.0.113.15:4444
+2026-11-10T12:00:30Z gw-firewall kernel: [UFW AUDIT] IN= OUT=eth1 SRC=192.168.1.100 DST=203.0.113.15 PROTO=TCP SPT=49154 DPT=4444 PSH ACK
+2026-11-10T12:00:45Z host-node dnsmasq[412]: query[A] evil-command-control.org from 192.168.1.100
+2026-11-10T12:00:46Z host-node dnsmasq[412]: forwarded evil-command-control.org to 1.1.1.1
+2026-11-10T12:00:46Z host-node dnsmasq[412]: reply evil-command-control.org is 203.0.113.15
+2026-11-10T12:01:00Z gw-firewall kernel: [UFW AUDIT] IN= OUT=eth1 SRC=192.168.1.100 DST=203.0.113.15 PROTO=TCP SPT=49156 DPT=4444 ESTABLISHED
+2026-11-10T12:01:15Z host-node app[902]: Process 'system-update' executing encoded base64 payload from remote stream
+

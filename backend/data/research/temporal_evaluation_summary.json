@@ -1,0 +1,439 @@
+{
+  "evaluation_metadata": {
+    "phase": "Phase 3 \u2014 Temporal Behaviour Intelligence Engine",
+    "test_dataset": "temporal_test.csv",
+    "total_test_entries": 230,
+    "total_anomalous": 180,
+    "total_normal": 50,
+    "categories": [
+      "auth_anomaly",
+      "c2_connection",
+      "db_failure",
+      "http_error_surge",
+      "http_flood",
+      "normal",
+      "resource_exhaustion",
+      "sql_injection",
+      "ssh_bruteforce",
+      "unseen_pattern"
+    ],
+    "evaluated_at": "2026-11-03T08:48:55.563938+00:00"
+  },
+  "results": {
+    "hybrid_ensemble_baseline": {
+      "model": "Hybrid Ensemble (Phase 2)",
+      "duration_seconds": 0.4,
+      "metrics": {
+        "precision": 0.96,
+        "recall": 0.4,
+        "f1_score": 0.5647,
+        "accuracy": 0.5174,
+        "fpr": 0.06,
+        "tp": 72,
+        "fp": 3,
+        "tn": 47,
+        "fn": 108,
+        "confidence_intervals_95": {
+          "precision": [
+            0.8889,
+            0.9863
+          ],
+          "recall": [
+            0.3312,
+            0.4729
+          ],
+          "fpr": [
+            0.0206,
+            0.1622
+          ],
+          "accuracy": [
+            0.4531,
+            0.5812
+          ]
+        }
+      },
+      "category_recall": {
+        "http_flood": {
+          "total": 25,
+          "anomalous": 25,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "auth_anomaly": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "db_failure": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "unseen_pattern": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 3,
+          "recall": 0.15
+        },
+        "ssh_bruteforce": {
+          "total": 30,
+          "anomalous": 30,
+          "detected": 30,
+          "recall": 1.0
+        },
+        "http_error_surge": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 4,
+          "recall": 0.2
+        },
+        "normal": {
+          "total": 50,
+          "anomalous": 0,
+          "detected": 0,
+          "recall": "N/A"
+        },
+        "c2_connection": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "resource_exhaustion": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "sql_injection": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        }
+      }
+    },
+    "temporal_engine_only": {
+      "model": "Temporal Engine (Phase 3)",
+      "duration_seconds": 0.062,
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.9444,
+        "f1_score": 0.9714,
+        "accuracy": 0.9565,
+        "fpr": 0.0,
+        "tp": 170,
+        "fp": 0,
+        "tn": 50,
+        "fn": 10,
+        "confidence_intervals_95": {
+          "precision": [
+            0.9779,
+            1.0
+          ],
+          "recall": [
+            0.9008,
+            0.9695
+          ],
+          "fpr": [
+            0.0,
+            0.0713
+          ],
+          "accuracy": [
+            0.9218,
+            0.9762
+          ]
+        }
+      },
+      "category_recall": {
+        "http_flood": {
+          "total": 25,
+          "anomalous": 25,
+          "detected": 25,
+          "recall": 1.0
+        },
+        "auth_anomaly": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        },
+        "db_failure": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "unseen_pattern": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        },
+        "ssh_bruteforce": {
+          "total": 30,
+          "anomalous": 30,
+          "detected": 30,
+          "recall": 1.0
+        },
+        "http_error_surge": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        },
+        "normal": {
+          "total": 50,
+          "anomalous": 0,
+          "detected": 0,
+          "recall": "N/A"
+        },
+        "c2_connection": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "resource_exhaustion": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "sql_injection": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 10,
+          "recall": 0.5
+        }
+      },
+      "telemetry_summary": {
+        "global_spike_windows": 4,
+        "ip_spikes": 0,
+        "endpoint_spikes": 0,
+        "category_spikes": 0,
+        "auth_burst_ips": 1,
+        "http_error_buckets": 3
+      }
+    },
+    "hybrid_plus_temporal": {
+      "model": "Hybrid + Temporal (Phase 3 Full)",
+      "duration_seconds": 0.428,
+      "metrics": {
+        "precision": 0.9836,
+        "recall": 1.0,
+        "f1_score": 0.9917,
+        "accuracy": 0.987,
+        "fpr": 0.06,
+        "tp": 180,
+        "fp": 3,
+        "tn": 47,
+        "fn": 0,
+        "confidence_intervals_95": {
+          "precision": [
+            0.9529,
+            0.9944
+          ],
+          "recall": [
+            0.9791,
+            1.0
+          ],
+          "fpr": [
+            0.0206,
+            0.1622
+          ],
+          "accuracy": [
+            0.9624,
+            0.9956
+          ]
+        }
+      },
+      "category_recall": {
+        "http_flood": {
+          "total": 25,
+          "anomalous": 25,
+          "detected": 25,
+          "recall": 1.0
+        },
+        "auth_anomaly": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        },
+        "db_failure": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "unseen_pattern": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        },
+        "ssh_bruteforce": {
+          "total": 30,
+          "anomalous": 30,
+          "detected": 30,
+          "recall": 1.0
+        },
+        "http_error_surge": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        },
+        "normal": {
+          "total": 50,
+          "anomalous": 0,
+          "detected": 0,
+          "recall": "N/A"
+        },
+        "c2_connection": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "resource_exhaustion": {
+          "total": 15,
+          "anomalous": 15,
+          "detected": 15,
+          "recall": 1.0
+        },
+        "sql_injection": {
+          "total": 20,
+          "anomalous": 20,
+          "detected": 20,
+          "recall": 1.0
+        }
+      },
+      "improvement": {
+        "recall_delta_vs_baseline": 0.6,
+        "volumetric_4cat_subset": {
+          "categories": [
+            "ssh_bruteforce",
+            "http_flood",
+            "http_error_surge",
+            "c2_connection"
+          ],
+          "total_samples": 90,
+          "baseline_recall": 0.3,
+          "combined_recall": 1.0,
+          "delta": 0.7
+        },
+        "volumetric_6cat_suite": {
+          "categories": [
+            "http_flood",
+            "c2_connection",
+            "db_failure",
+            "auth_anomaly",
+            "http_error_surge",
+            "unseen_pattern"
+          ],
+          "total_samples": 115,
+          "baseline_recall": 0.0583,
+          "combined_recall": 1.0,
+          "delta": 0.9417
+        },
+        "temporal_all_7cat": {
+          "categories": [
+            "ssh_bruteforce",
+            "http_flood",
+            "c2_connection",
+            "db_failure",
+            "auth_anomaly",
+            "http_error_surge",
+            "unseen_pattern"
+          ],
+          "total_samples": 145,
+          "baseline_recall": 0.1929,
+          "combined_recall": 1.0,
+          "delta": 0.8071
+        }
+      }
+    }
+  },
+  "summary_table": {
+    "Hybrid Ensemble (Phase 2 Baseline)": {
+      "TP": 72,
+      "FP": 3,
+      "TN": 47,
+      "FN": 108,
+      "Precision": 0.96,
+      "Precision_95_CI": [
+        0.8889,
+        0.9863
+      ],
+      "Recall": 0.4,
+      "Recall_95_CI": [
+        0.3312,
+        0.4729
+      ],
+      "F1": 0.5647,
+      "Accuracy": 0.5174,
+      "FPR": 0.06,
+      "FPR_95_CI": [
+        0.0206,
+        0.1622
+      ],
+      "Duration(s)": 0.4
+    },
+    "Temporal Engine Only": {
+      "TP": 170,
+      "FP": 0,
+      "TN": 50,
+      "FN": 10,
+      "Precision": 1.0,
+      "Precision_95_CI": [
+        0.9779,
+        1.0
+      ],
+      "Recall": 0.9444,
+      "Recall_95_CI": [
+        0.9008,
+        0.9695
+      ],
+      "F1": 0.9714,
+      "Accuracy": 0.9565,
+      "FPR": 0.0,
+      "FPR_95_CI": [
+        0.0,
+        0.0713
+      ],
+      "Duration(s)": 0.062
+    },
+    "Hybrid + Temporal (Phase 3)": {
+      "TP": 180,
+      "FP": 3,
+      "TN": 47,
+      "FN": 0,
+      "Precision": 0.9836,
+      "Precision_95_CI": [
+        0.9529,
+        0.9944
+      ],
+      "Recall": 1.0,
+      "Recall_95_CI": [
+        0.9791,
+        1.0
+      ],
+      "F1": 0.9917,
+      "Accuracy": 0.987,
+      "FPR": 0.06,
+      "FPR_95_CI": [
+        0.0206,
+        0.1622
+      ],
+      "Duration(s)": 0.428,
+      "Recall \u0394 vs Baseline": 0.6,
+      "Volumetric Recall \u0394 (4-cat N=90)": 0.7,
+      "Volumetric Recall \u0394 (6-cat N=115)": 0.9417,
+      "Temporal Recall \u0394 (7-cat N=145)": 0.8071
+    }
+  }
+}
