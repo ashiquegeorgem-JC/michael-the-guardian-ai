@@ -59,7 +59,69 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Root endpoint & documentation redirects
+# ── CORS ──────────────────────────────────────────────────────────────────────
+# Must be registered immediately after FastAPI() and before any route inclusions.
+# Starlette processes middleware in a stack built at app startup; placing
+# add_middleware here ensures OPTIONS preflight requests are handled correctly
+# before the router layer is reached.
+
+def _build_allowed_origins() -> list[str]:
+    """
+    Build the explicit allowed-origins list from multiple sources:
+      1. settings.ALLOWED_ORIGINS  (default: localhost:3000 for local dev)
+      2. settings.FRONTEND_URL     (set FRONTEND_URL env var on Render/Vercel)
+      3. ADDITIONAL_ALLOWED_ORIGINS env var (comma-separated, for future deployments)
+
+    The regex pattern below additionally covers:
+      - Any *.vercel.app preview deployment (https)
+      - The Render backend itself (https://*.onrender.com)
+      - Any localhost port for local development (http)
+    """
+    seen: set[str] = set()
+    origins: list[str] = []
+
+    def _add(url: str) -> None:
+        url = url.strip().rstrip("/")
+        if url and url not in seen:
+            seen.add(url)
+            origins.append(url)
+
+    # 1. Base list from settings (env: ALLOWED_ORIGINS, comma-separated)
+    for o in settings.ALLOWED_ORIGINS:
+        _add(o)
+
+    # 2. Primary production frontend URL (env: FRONTEND_URL on Render)
+    if settings.FRONTEND_URL:
+        _add(settings.FRONTEND_URL)
+
+    # 3. Extra origins (env: ADDITIONAL_ALLOWED_ORIGINS, comma-separated)
+    for o in os.getenv("ADDITIONAL_ALLOWED_ORIGINS", "").split(","):
+        _add(o)
+
+    logger.info("CORS explicit allow-list (%d origins): %s", len(origins), origins)
+    return origins
+
+
+_CORS_ORIGIN_REGEX = (
+    r"https://[a-zA-Z0-9-]+\.vercel\.app"      # Vercel preview & prod deployments
+    r"|https://[a-zA-Z0-9-]+\.onrender\.com"   # Render services
+    r"|http://localhost:\d+"                    # local dev, any port
+    r"|http://127\.0\.0\.1:\d+"                # local dev, loopback
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_build_allowed_origins(),
+    allow_origin_regex=_CORS_ORIGIN_REGEX,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
+    max_age=600,
+)
+
+# ── Root endpoints & backwards-compat doc redirects ───────────────────────────
+
 @app.get("/", tags=["Root"])
 async def root():
     """Root health and discovery endpoint."""
@@ -82,29 +144,6 @@ async def api_docs_redirect():
 async def api_redoc_redirect():
     """Redirect /api/redoc to /redoc for backwards compatibility."""
     return RedirectResponse(url="/redoc")
-
-# CORS configuration: support local dev + production frontend origins via env and regex
-def get_allowed_origins() -> list[str]:
-    origins = list(settings.ALLOWED_ORIGINS)
-    frontend_url = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
-    if frontend_url and frontend_url not in origins:
-        origins.append(frontend_url)
-    custom_origins = os.getenv("ADDITIONAL_ALLOWED_ORIGINS", "")
-    if custom_origins:
-        for orig in custom_origins.split(","):
-            cleaned = orig.strip().rstrip("/")
-            if cleaned and cleaned not in origins:
-                origins.append(cleaned)
-    return origins
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=get_allowed_origins(),
-    allow_origin_regex=r"https://.*\.vercel\.app|https://.*\.onrender\.com|http://localhost:\d+",
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Routers
 app.include_router(logs.router, prefix="/api/logs", tags=["Logs"])

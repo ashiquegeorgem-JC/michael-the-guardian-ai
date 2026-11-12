@@ -14,8 +14,16 @@ class Settings(BaseSettings):
     APP_SECRET_KEY: str = "dev-secret-key-change-in-production"
     PORT: int = int(os.getenv("PORT", "8000"))
 
-    # CORS
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    # CORS — explicit allowed origins (comma-separated in env: ALLOWED_ORIGINS)
+    ALLOWED_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://frontend-ten-nu-87.vercel.app",
+    ]
+
+    # Production frontend origin — overridable via FRONTEND_URL env var on Render.
+    # e.g. FRONTEND_URL=https://frontend-ten-nu-87.vercel.app
+    FRONTEND_URL: str = ""
 
     # Supabase
     SUPABASE_URL: str = ""
