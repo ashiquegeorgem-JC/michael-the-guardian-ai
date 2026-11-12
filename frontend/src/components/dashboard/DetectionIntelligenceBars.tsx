@@ -22,41 +22,38 @@ export function DetectionIntelligenceBars({
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '24px 28px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="flex flex-col justify-between h-full space-y-4 font-sans"
+      className="flex flex-col h-full font-sans"
     >
       {/* Header */}
-      <div className="border-b border-[rgba(212,175,55,0.1)] pb-4">
-        <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
+      <div className="border-b border-white/[0.06] pb-3 mb-4">
+        <h2 className="text-base font-semibold text-white font-heading">
           Detection Intelligence
         </h2>
-        <p className="text-xs text-[#D1CBC0] font-subheading font-light mt-1">
-          ML and rule-based detection engines
+        <p className="text-xs text-[#94A3B8] font-subheading mt-0.5">
+          ML and rule-based detection engine performance
         </p>
       </div>
 
-      {/* Engine Contribution Bars in Celestial Gold */}
-      <div className="space-y-3.5 my-auto">
+      {/* Engine Contribution Bars */}
+      <div className="space-y-4 flex-1">
         {ENGINES.map((eng) => (
-          <div key={eng.name} className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs font-subheading">
-              <span className="text-[#D1CBC0] font-medium">{eng.name}</span>
-              <span className="text-[#FAF9F5] font-mono font-semibold">{eng.weight}%</span>
+          <div key={eng.name}>
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <span className="text-[#94A3B8] font-subheading">{eng.name}</span>
+              <span className="font-mono text-white font-medium">{eng.weight}%</span>
             </div>
-
-            {/* Clean Progress track */}
-            <div className="h-2 w-full rounded-full bg-[#141A1F] border border-[rgba(212,175,55,0.08)] overflow-hidden">
+            <div className="h-1 w-full rounded-full bg-white/[0.06] overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{
                   width: `${eng.weight}%`,
-                  background: 'linear-gradient(90deg, #D4AF37 0%, #E8C868 100%)',
-                  boxShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                  background: 'linear-gradient(90deg, #38BDF8 0%, #60A5FA 100%)',
                 }}
               />
             </div>

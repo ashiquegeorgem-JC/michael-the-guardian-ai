@@ -19,7 +19,7 @@ export function AnomalyCard({ anomaly, onSelect }: AnomalyCardProps) {
       case 'isolation_forest':
         return 'Isolation Forest ML';
       case 'tfidf':
-        return 'TF-IDF Vector Outlier';
+        return 'TF-IDF Dispersion';
       case 'statistical':
         return 'Statistical Z-Score';
       case 'rule_based':
@@ -33,33 +33,34 @@ export function AnomalyCard({ anomaly, onSelect }: AnomalyCardProps) {
     <div
       onClick={onSelect}
       style={{
-        backgroundColor: '#0C1119',
+        backgroundColor: '#11161E',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        padding: '20px',
+        borderRadius: '16px',
+        padding: '22px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="hover:border-blue-500/40 transition-all space-y-4 font-sans cursor-pointer group"
+      className="hover:border-white/20 transition-all space-y-4 font-sans cursor-pointer group flex flex-col justify-between"
     >
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="space-y-1">
+        <div className="space-y-1.5 flex-1 min-w-[200px]">
           <div className="flex items-center gap-2">
             <Badge variant={anomaly.severity} dot size="sm">
               {anomaly.severity}
             </Badge>
-            <Badge variant="cyan" size="sm">
+            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/[0.04] text-slate-300 border border-white/[0.06]">
               {getMethodLabel(anomaly.method)}
-            </Badge>
+            </span>
           </div>
-          <h4 className="text-sm font-semibold text-[#F5F7FA] mt-1 group-hover:text-[#3B82F6] transition-colors">
+          <h4 className="text-sm font-semibold text-white mt-1 group-hover:text-sky-300 transition-colors line-clamp-2">
             {anomaly.reason}
           </h4>
         </div>
 
         {/* Score Meter */}
-        <div className="text-right">
-          <div className="text-xs text-[#A7B1C0]">Anomaly Score</div>
-          <div className="text-base font-bold font-mono text-[#F5F7FA] flex items-center justify-end gap-1.5 mt-0.5">
+        <div className="text-right shrink-0">
+          <div className="text-[11px] text-[#64748B] font-mono uppercase">Score</div>
+          <div className="text-base font-bold font-mono text-white flex items-center justify-end gap-1.5 mt-0.5">
             <Activity className="w-3.5 h-3.5 text-[#EF4444]" />
             {scorePercent}%
           </div>
@@ -67,16 +68,16 @@ export function AnomalyCard({ anomaly, onSelect }: AnomalyCardProps) {
       </div>
 
       {/* Structured Details */}
-      <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-[#080C12] border border-white/[0.04] text-xs">
-        <div>
-          <span className="text-[#687589]">Source Entity:</span>
-          <div className="font-mono text-[#F5F7FA] truncate mt-0.5">
+      <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[#090D13] border border-white/[0.05] text-xs">
+        <div className="min-w-0">
+          <span className="text-[10px] font-mono uppercase text-[#64748B] block">Source Entity</span>
+          <div className="font-mono text-xs text-slate-200 truncate mt-0.5">
             {(anomaly.source_ip as string | undefined) || (anomaly.host as string | undefined) || '127.0.0.1'}
           </div>
         </div>
-        <div>
-          <span className="text-[#687589]">Observed Time:</span>
-          <div className="font-mono text-[#A7B1C0] mt-0.5">
+        <div className="min-w-0">
+          <span className="text-[10px] font-mono uppercase text-[#64748B] block">Observed Time</span>
+          <div className="font-mono text-xs text-slate-300 truncate mt-0.5">
             {formatDate((anomaly.timestamp as string | undefined) || anomaly.detected_at)}
           </div>
         </div>

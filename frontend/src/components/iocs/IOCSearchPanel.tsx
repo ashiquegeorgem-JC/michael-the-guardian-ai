@@ -47,11 +47,11 @@ export function IOCSearchPanel({ onSearch, loading }: Props) {
   };
 
   const selectStyle: React.CSSProperties = {
-    background: '#0F1629',
-    border: '1px solid #1E2D4A',
+    background: '#0D1117',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
     borderRadius: 8,
     color: 'var(--text-secondary)',
-    padding: '7px 10px',
+    padding: '8px 12px',
     fontSize: 12,
     outline: 'none',
     cursor: 'pointer',
@@ -59,11 +59,11 @@ export function IOCSearchPanel({ onSearch, loading }: Props) {
   };
 
   const inputStyle: React.CSSProperties = {
-    background: '#0F1629',
-    border: '1px solid #1E2D4A',
+    background: '#0D1117',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
     borderRadius: 8,
     color: 'var(--text-primary)',
-    padding: '7px 10px',
+    padding: '8px 12px',
     fontSize: 13,
     outline: 'none',
     flex: 1,
@@ -71,7 +71,13 @@ export function IOCSearchPanel({ onSearch, loading }: Props) {
   };
 
   return (
-    <div style={{ background: 'rgba(10,14,26,0.9)', border: '1px solid #1E2D4A', borderRadius: 14, padding: 20 }}>
+    <div style={{
+      backgroundColor: '#11161E',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      borderRadius: 16,
+      padding: '20px 24px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
+    }}>
       {/* Main search row */}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: 200, position: 'relative' }}>

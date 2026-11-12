@@ -29,10 +29,11 @@ export function ModelMetrics({ metrics }: ModelMetricsProps) {
   return (
     <div
       style={{
-        backgroundColor: '#0C1119',
+        backgroundColor: '#11161E',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        padding: '20px',
+        borderRadius: '16px',
+        padding: '24px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
       className="space-y-4 font-sans"
     >

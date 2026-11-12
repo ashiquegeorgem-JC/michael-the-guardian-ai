@@ -9,90 +9,94 @@ interface ThreatIntelGaugeProps {
 }
 
 export function ThreatIntelGauge({ summary, recentIocs = [] }: ThreatIntelGaugeProps) {
-  const threatScore = 82;
+  const threatScore = 20;
+  const scoreColor = threatScore < 30 ? '#34D399' : threatScore < 60 ? '#FBBF24' : '#F87171';
+  const scoreLabel = threatScore < 30 ? 'Normal Baseline' : threatScore < 60 ? 'Elevated' : 'High Risk';
+
+  const totalIocs = summary?.total_iocs ?? recentIocs.length ?? 0;
+  const ipCount = summary?.by_type?.ipv4 ?? 0;
+  const domainCount = summary?.by_type?.domain ?? 0;
+  const hashCount = summary?.by_type?.file_hash ?? 0;
+  const confirmedBad = summary?.confirmed_count ?? 0;
 
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '24px 28px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="space-y-4 font-sans h-full flex flex-col justify-between"
+      className="font-sans h-full flex flex-col"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[rgba(212,175,55,0.1)] pb-4">
+      <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
         <div>
-          <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
-            Threat Intelligence
+          <h2 className="text-base font-semibold text-white font-heading">
+            Threat Intelligence & IOCs
           </h2>
+          <p className="text-xs text-[#94A3B8] font-subheading mt-0.5">
+            External reputation feed correlation
+          </p>
         </div>
-
-        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-[#F59E0B] border border-amber-500/30 font-subheading">
-          Suspicious
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">
+            Enriched
+          </span>
+          <span className="text-[11px] px-2 py-0.5 rounded bg-white/[0.05] text-[#94A3B8] border border-white/[0.08]">
+            Intel Feed ↗
+          </span>
+        </div>
       </div>
 
-      {/* Radial Gauge & Details */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 my-auto">
-        {/* Radial Circle in Celestial Gold */}
-        <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
-          <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="transparent"
-              stroke="#141A1F"
-              strokeWidth="9"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="transparent"
-              stroke="#D4AF37"
-              strokeWidth="9"
-              strokeDasharray={2 * Math.PI * 40}
-              strokeDashoffset={2 * Math.PI * 40 * (1 - threatScore / 100)}
-              strokeLinecap="round"
-              style={{
-                filter: 'drop-shadow(0 0 6px rgba(212, 175, 55, 0.7))',
-              }}
-            />
-          </svg>
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-2xl font-bold font-mono text-[#FAF9F5] leading-none">
+      {/* Score + Provider Row */}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <div className="text-xs text-[#64748B] font-subheading mb-1">Enriched Threat Score</div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold font-mono" style={{ color: scoreColor }}>
               {threatScore}
             </span>
-            <span className="text-[9px] uppercase tracking-wider text-[#D4AF37] font-subheading font-medium mt-1">
-              Threat Score
-            </span>
+            <span className="text-sm text-[#64748B]">/ 100</span>
           </div>
+          <div className="text-xs mt-1" style={{ color: scoreColor }}>{scoreLabel}</div>
         </div>
 
-        {/* Threat Context Breakdown */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-xs flex-1 w-full font-subheading">
-          <div>
-            <div className="text-[10px] text-[#8E877D]">Provider</div>
-            <div className="text-[#FAF9F5] font-medium mt-0.5">VirusTotal</div>
+        <div className="text-right text-xs text-[#94A3B8] font-subheading">
+          <div className="text-[11px] text-[#64748B] mb-1">Primary Provider</div>
+          <div className="flex items-center gap-1.5 justify-end">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-white font-medium">VirusTotal v3</span>
           </div>
-          <div>
-            <div className="text-[10px] text-[#8E877D]">Detection Ratio</div>
-            <div className="text-[#FAF9F5] font-mono font-medium mt-0.5">18 / 62</div>
-          </div>
-          <div>
-            <div className="text-[10px] text-[#8E877D]">Reputation</div>
-            <div className="text-[#EF4444] font-medium mt-0.5">Malicious</div>
-          </div>
-          <div>
-            <div className="text-[10px] text-[#8E877D]">Taxonomy</div>
-            <div className="text-[#D4AF37] font-medium mt-0.5">C2, Malware</div>
-          </div>
+          <div className="text-[11px] text-[#64748B] mt-1">Confidence: 96.4%</div>
         </div>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-white/[0.05] mb-4" />
+
+      {/* IOC Breakdown Grid */}
+      <div className="text-xs text-[#64748B] font-subheading mb-3">
+        Extracted Indicators ({totalIocs} Total)
+      </div>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm flex-1">
+        {[
+          { label: 'IPv4 Addresses', value: ipCount },
+          { label: 'Domains & URLs', value: domainCount },
+          { label: 'File Hashes', value: hashCount },
+          { label: 'Confirmed Bad', value: confirmedBad, alert: confirmedBad > 0 },
+        ].map((row) => (
+          <div key={row.label} className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+            <span className="text-[#94A3B8] text-xs">{row.label}</span>
+            <span
+              className="font-mono font-semibold text-xs"
+              style={{ color: row.alert ? '#F87171' : '#FFFFFF' }}
+            >
+              {row.value}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );

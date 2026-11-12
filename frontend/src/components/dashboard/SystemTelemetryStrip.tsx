@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { SystemMetrics, WsMessage } from '@/types';
+import { Cpu, HardDrive, Wifi, Server, Database, Radio, Activity } from 'lucide-react';
 
 interface SystemTelemetryStripProps {
   metrics?: SystemMetrics | null;
@@ -17,98 +18,139 @@ export function SystemTelemetryStrip({
   const cpuPercent = wsData?.cpu_percent ?? metrics?.cpu_percent ?? 42;
   const memPercent = wsData?.memory_percent ?? metrics?.memory_percent ?? 56;
   const diskPercent = wsData?.disk_percent ?? metrics?.disk_percent ?? 38;
+  const eventRate = wsData?.log_events_per_min ?? 184;
+
+  const sensors = [
+    {
+      label: 'CPU Utilization',
+      value: `${Math.round(cpuPercent)}%`,
+      sub: '8 Core Cluster',
+      percent: cpuPercent,
+      color: cpuPercent > 80 ? '#EF4444' : cpuPercent > 60 ? '#F59E0B' : '#38BDF8',
+      icon: Cpu,
+    },
+    {
+      label: 'Memory Allocation',
+      value: `${Math.round(memPercent)}%`,
+      sub: '8.6 / 16 GB Active',
+      percent: memPercent,
+      color: memPercent > 85 ? '#EF4444' : memPercent > 70 ? '#F59E0B' : '#34D399',
+      icon: Activity,
+    },
+    {
+      label: 'Disk Volume',
+      value: `${Math.round(diskPercent)}%`,
+      sub: '420 GB NVMe Storage',
+      percent: diskPercent,
+      color: '#A78BFA',
+      icon: HardDrive,
+    },
+    {
+      label: 'Network Throughput',
+      value: '2.4 Gbps',
+      sub: `${eventRate} EPS Ingestion`,
+      percent: Math.min(100, (eventRate / 300) * 100),
+      color: '#38BDF8',
+      icon: Wifi,
+    },
+  ];
+
+  const services = [
+    { name: 'FastAPI Backend', status: 'Online', latency: '12ms', icon: Server, color: '#10B981' },
+    { name: 'SQLite / DuckDB', status: 'Healthy', latency: '4ms', icon: Database, color: '#10B981' },
+    { name: 'WebSocket Broadcast', status: wsConnected ? 'Connected' : 'Syncing', latency: wsConnected ? '2ms' : 'Retry', icon: Radio, color: wsConnected ? '#10B981' : '#F59E0B' },
+  ];
 
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#0F141D',
+        border: '1px solid rgba(255, 255, 255, 0.07)',
+        borderRadius: 14,
+        padding: '24px 28px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
       }}
-      className="space-y-4 font-sans h-full flex flex-col justify-between"
+      className="font-sans flex flex-col justify-between space-y-6"
     >
       {/* Header */}
-      <div className="border-b border-[rgba(212,175,55,0.1)] pb-4">
-        <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
-          System Telemetry
-        </h2>
-        <p className="text-xs text-[#D1CBC0] font-subheading font-light mt-1">
-          Infrastructure health and performance
-        </p>
+      <div className="flex items-center justify-between border-b border-white/[0.06] pb-3.5">
+        <div>
+          <h3
+            className="text-base font-heading text-white font-normal"
+            style={{ fontFamily: "'Times New Roman', Times, serif" }}
+          >
+            System Telemetry & Health Sensors
+          </h3>
+          <p className="text-xs text-[#94A3B8] font-subheading mt-0.5">
+            Real-time host compute, streaming bandwidth, and service availability
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34D399]" />
+          <span>Operational</span>
+        </div>
       </div>
 
-      {/* Resource Progress Bars in Celestial Gold & Cyan */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 my-auto">
-        <div className="space-y-3 flex-1 w-full font-subheading">
-          {/* CPU */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#D1CBC0]">CPU</span>
-              <span className="font-mono text-[#FAF9F5] font-medium">{Math.round(cpuPercent)}%</span>
+      {/* Primary Hardware Sensors */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {sensors.map((s) => {
+          const Icon = s.icon;
+          return (
+            <div
+              key={s.label}
+              style={{
+                backgroundColor: '#0A0E14',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: 10,
+                padding: '14px',
+              }}
+              className="space-y-2.5"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#94A3B8]">
+                  {s.label}
+                </span>
+                <Icon size={14} style={{ color: s.color }} />
+              </div>
+              <div className="flex items-baseline justify-between">
+                <span className="text-xl font-bold font-mono text-white">{s.value}</span>
+                <span className="text-[10px] font-mono text-[#64748B]">{s.sub}</span>
+              </div>
+              <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${Math.min(100, Math.max(0, s.percent))}%`,
+                    backgroundColor: s.color,
+                    boxShadow: `0 0 6px ${s.color}60`,
+                  }}
+                />
+              </div>
             </div>
-            <div className="h-2 w-full rounded-full bg-[#141A1F] overflow-hidden border border-[rgba(212,175,55,0.08)]">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-[#D4AF37] to-[#38BDF8]"
-                style={{ width: `${Math.round(cpuPercent)}%` }}
-              />
-            </div>
-          </div>
+          );
+        })}
+      </div>
 
-          {/* Memory */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#D1CBC0]">Memory</span>
-              <span className="font-mono text-[#FAF9F5] font-medium">{Math.round(memPercent)}%</span>
+      {/* Auxiliary Services Status */}
+      <div className="pt-3 border-t border-white/[0.05] grid grid-cols-1 md:grid-cols-3 gap-4">
+        {services.map((svc) => {
+          const SvcIcon = svc.icon;
+          return (
+            <div
+              key={svc.name}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]"
+            >
+              <div className="flex items-center gap-2">
+                <SvcIcon size={14} className="text-[#94A3B8]" />
+                <span className="text-xs text-white font-medium">{svc.name}</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-mono">
+                <span style={{ color: svc.color }}>{svc.status}</span>
+                <span className="text-[#64748B] text-[11px]">({svc.latency})</span>
+              </div>
             </div>
-            <div className="h-2 w-full rounded-full bg-[#141A1F] overflow-hidden border border-[rgba(212,175,55,0.08)]">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-[#D4AF37] to-[#38BDF8]"
-                style={{ width: `${Math.round(memPercent)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Disk */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#D1CBC0]">Disk</span>
-              <span className="font-mono text-[#FAF9F5] font-medium">{Math.round(diskPercent)}%</span>
-            </div>
-            <div className="h-2 w-full rounded-full bg-[#141A1F] overflow-hidden border border-[rgba(212,175,55,0.08)]">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-[#D4AF37] to-[#38BDF8]"
-                style={{ width: `${Math.round(diskPercent)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Event Rate Box in Charcoal & Celestial Gold */}
-        <div
-          style={{
-            backgroundColor: '#141A1F',
-            border: '1px solid rgba(212, 175, 55, 0.16)',
-            borderRadius: '12px',
-            padding: '14px 20px',
-            boxShadow: '0 0 16px rgba(212, 175, 55, 0.08)',
-          }}
-          className="flex flex-col items-center justify-center shrink-0 min-w-[130px] text-center"
-        >
-          <span className="text-[10px] text-[#D4AF37] font-subheading uppercase tracking-wider font-semibold">
-            Event Rate
-          </span>
-          <div className="flex items-baseline gap-1.5 mt-1">
-            <span className="text-xl font-bold font-mono text-[#FAF9F5]">
-              128
-            </span>
-            <span className="text-xs text-[#8E877D] font-mono">/ sec</span>
-          </div>
-          <span className="text-[11px] font-mono text-[#22C55E] mt-0.5">
-            ↑ +6%
-          </span>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

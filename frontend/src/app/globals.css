@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
-/* ── MICHAEL – The Guardian AI: Celestial Gold & Warm Charcoal Design Tokens ──── */
-/* Inspired by Bethesda AG Church's majestic editorial aesthetic                   */
+/* ── MICHAEL – The Guardian AI: Enterprise Security Operations Command System ── */
+/* Typography: Main Headings in Times New Roman (Not bold, elegant, spacious)     */
+/* Subheadings, metadata, controls and tables in clean modern sans-serif (Inter)  */
+/* Aesthetic: Deep charcoal obsidian, hairline borders, restrained cyan accents    */
+
 :root {
-  /* Surfaces & Backgrounds — Deep Charcoal with Warm Undertones */
-  --bg-primary: #12171B;     /* Deep rich charcoal canvas */
-  --bg-secondary: #171E24;   /* Warm charcoal surface */
-  --bg-panel: #1C242B;       /* Main panel / card surface (Bethesda #1C252B) */
-  --bg-elevated: #222C35;    /* Elevated modals & popovers */
-  --bg-hover: #26323C;       /* Hover state */
+  /* Surfaces & Backgrounds — Deep Obsidian & Fine Charcoal */
+  --bg-primary: #07090E;     /* Deep near-black canvas */
+  --bg-secondary: #0C1017;   /* Large section surface */
+  --bg-panel: #10151E;       /* Elevated workspace panel */
+  --bg-elevated: #151C28;    /* Flyouts, popovers, drawers */
+  --bg-hover: #192130;       /* Interactive hover state */
 
   /* Aliases */
   --background: var(--bg-primary);
@@ -16,54 +19,51 @@
   --surface-elevated: var(--bg-elevated);
   --surface-hover: var(--bg-hover);
 
-  /* Typography Colors — Warm Ivory, Sand & Taupe */
-  --text-primary: #FAF9F5;   /* Warm ivory / cream */
-  --text-secondary: #D1CBC0; /* Warm sand */
-  --text-muted: #8E877D;     /* Warm muted taupe */
-  --text-disabled: #5E5850;
+  /* Typography Colors — Crisp White, Silver Slate, Muted Metadata */
+  --text-primary: #FFFFFF;   /* Pure crisp white */
+  --text-secondary: #94A3B8; /* Cool silver-slate */
+  --text-muted: #64748B;     /* Muted metadata */
+  --text-disabled: #475569;
 
-  /* Celestial Gold & Status Colors */
-  --accent-gold: #D4AF37;       /* Bethesda signature celestial gold */
-  --accent-gold-light: #E8C868; /* Champagne gold highlight */
-  --accent-gold-dark: #A38420;  /* Deep antique gold */
-  --accent-cyan: #38BDF8;       /* Telemetry cyan */
-  --accent-violet: #A78BFA;     /* Intelligence violet */
+  /* Restrained Security Accents */
+  --accent-cyan: #38BDF8;       /* Primary SOC telemetry blue/cyan */
+  --accent-teal: #2DD4BF;       /* System health & active streams */
+  --accent-purple: #A78BFA;     /* Minimal threat correlation accent */
 
-  --color-success: #22C55E;     /* Healthy / active */
-  --color-warning: #F59E0B;     /* Warning */
-  --color-critical: #EF4444;    /* Critical threat */
+  --color-success: #10B981;     /* Validated / Normal */
+  --color-warning: #F59E0B;     /* Warning / Suspicious */
+  --color-critical: #EF4444;    /* Critical / Severe intrusion */
 
   /* Backward Compatibility */
-  --primary: var(--accent-gold);
+  --primary: var(--accent-cyan);
   --success: var(--color-success);
   --warning: var(--color-warning);
   --critical: var(--color-critical);
 
-  /* Warm Sand & Gold Borders */
-  --border-subtle: rgba(212, 175, 55, 0.08);
-  --border-default: rgba(212, 175, 55, 0.14);
-  --border-strong: rgba(212, 175, 55, 0.28);
-  --border-active: rgba(212, 175, 55, 0.6);
+  /* Very Subtle Hairline Minimalist Borders */
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-default: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-active: rgba(255, 255, 255, 0.25);
   --border: var(--border-default);
 
-  /* Fonts */
-  --font-heading: 'Playfair Display', Georgia, serif;
-  --font-subheading: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-sans: 'Inter', 'Lato', system-ui, -apple-system, sans-serif;
+  /* Typography System — Times New Roman for Headings, Inter for Body */
+  --font-heading: 'Times New Roman', Times, 'Playfair Display', Georgia, serif;
+  --font-subheading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, monospace;
 
-  /* Refined Radii */
+  /* Restrained Radii (Consistent 12px-16px for major panels, 6px-8px for controls) */
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --radius-xl: 16px;
+  --radius-xl: 18px;
 
-  /* Atmospheric Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55);
-  --shadow-gold: 0 0 24px rgba(212, 175, 55, 0.2);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Base Setup ───────────────────────────────────────────────────────────── */
@@ -87,72 +87,60 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.55;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ── Typography Scale & Standards (Playfair Display + Lato) ───────────────── */
+/* ── Typography Scale & Standards (Times New Roman + Inter) ──────────────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
   letter-spacing: -0.01em;
-  font-weight: 600;
+  font-weight: 400; /* Times New Roman: Not bold, elegant, light/regular weight */
+  overflow-wrap: break-word;
 }
 
 h1 {
-  font-size: 1.85rem;
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: 2.15rem;
+  line-height: 1.2;
 }
 
 h2 {
-  font-size: 1.35rem;
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: 1.6rem;
+  line-height: 1.25;
 }
 
 h3 {
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+h4 {
   font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
+}
+
+p, span, label, input, textarea, select {
+  font-family: var(--font-sans);
 }
 
 .font-heading {
   font-family: var(--font-heading) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
 }
 
 .font-subheading {
   font-family: var(--font-subheading) !important;
+  line-height: 1.45;
 }
 
-.subheading, .page-subtitle, [data-subheading="true"] {
-  font-family: var(--font-subheading);
-  font-weight: 300;
-  color: var(--text-secondary);
-}
-
-/* Monospace restricted to technical data */
-code, pre, .font-mono, [data-mono="true"] {
+.font-mono {
   font-family: var(--font-mono) !important;
-  font-feature-settings: "liga" 0, "calt" 0;
 }
 
-/* ── Buttons, Cards & Interactive States ──────────────────────────────────── */
-button {
-  font-family: var(--font-subheading);
-}
-
-/* Gold glow utilities */
-.glow-gold {
-  box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
-}
-
-.border-gold {
-  border-color: rgba(212, 175, 55, 0.25);
-}
-
-/* ── Clean Scrollbars ─────────────────────────────────────────────────────── */
+/* ── Minimalist Clean Scrollbars ─────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -163,10 +151,114 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.2);
-  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.4);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.5);
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ── Global Recharts SOC Tooltip Styling ─────────────────────────────────── */
+/* Enforces crisp light text on dark backgrounds across all Recharts tooltips */
+.recharts-default-tooltip {
+  background-color: #0D1117 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-sans), sans-serif !important;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 1000 !important;
+}
+
+.recharts-tooltip-label {
+  color: #F1F5F9 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  margin-bottom: 6px !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  font-family: var(--font-mono), monospace !important;
+}
+
+.recharts-tooltip-item-list {
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+}
+
+.recharts-tooltip-item {
+  color: #E2E8F0 !important;
+  font-size: 12px !important;
+  padding: 2px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.recharts-tooltip-item-name {
+  color: #94A3B8 !important;
+  font-weight: 500 !important;
+}
+
+.recharts-tooltip-item-separator {
+  color: #64748B !important;
+  margin: 0 4px !important;
+}
+
+.recharts-tooltip-item-value {
+  color: #38BDF8 !important;
+  font-family: var(--font-mono), monospace !important;
+  font-weight: 600 !important;
+  margin-left: auto !important;
+}
+
+.recharts-tooltip-item-unit {
+  color: #94A3B8 !important;
+  font-size: 11px !important;
+  margin-left: 2px !important;
+}
+
+/* Any span or text inside a Recharts tooltip must NEVER be black or dark */
+.recharts-default-tooltip * {
+  color: #E2E8F0;
+}
+
+.recharts-default-tooltip .recharts-tooltip-label {
+  color: #F1F5F9 !important;
+}
+
+.recharts-default-tooltip .recharts-tooltip-item-name {
+  color: #94A3B8 !important;
+}
+
+.recharts-default-tooltip .recharts-tooltip-item-value {
+  color: #FFFFFF !important;
+}
+
+/* Cursor indicator */
+.recharts-tooltip-cursor {
+  stroke: rgba(56, 189, 248, 0.4) !important;
+  stroke-dasharray: 3 3 !important;
+  fill: rgba(56, 189, 248, 0.05) !important;
 }

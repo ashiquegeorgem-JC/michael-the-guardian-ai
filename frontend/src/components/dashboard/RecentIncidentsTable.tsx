@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShieldAlert } from 'lucide-react';
 import { Incident } from '@/types';
 
 interface RecentIncidentsTableProps {
@@ -12,150 +12,147 @@ interface RecentIncidentsTableProps {
 
 const SAMPLE_INCIDENTS = [
   {
+    id: 'INC-0427',
     severity: 'Critical',
-    title: 'SSH Brute Force',
+    title: 'SSH Brute Force Attack',
     source: '198.51.100.45',
     detection: 'Temporal + IF',
     status: 'Open',
-    statusBg: 'rgba(239, 68, 68, 0.15)',
-    statusColor: '#EF4444',
-    time: '10:42',
-    dotColor: '#EF4444',
+    statusColor: '#F87171',
+    time: '10:42 AM',
+    dotColor: '#F87171',
   },
   {
+    id: 'INC-0426',
     severity: 'High',
-    title: 'C2 Communication',
+    title: 'C2 Outbound Beaconing',
     source: '203.0.113.15',
-    detection: 'IF + TI',
+    detection: 'TI + IF',
     status: 'Open',
-    statusBg: 'rgba(239, 68, 68, 0.15)',
-    statusColor: '#EF4444',
-    time: '10:28',
-    dotColor: '#F97316',
+    statusColor: '#F87171',
+    time: '10:28 AM',
+    dotColor: '#FBBF24',
   },
   {
+    id: 'INC-0425',
     severity: 'High',
-    title: 'Data Exfiltration',
+    title: 'Data Exfiltration via DNS',
     source: '192.0.2.77',
     detection: 'Behavioural',
     status: 'Investigating',
-    statusBg: 'rgba(212, 175, 55, 0.15)',
-    statusColor: '#D4AF37',
-    time: '10:17',
-    dotColor: '#F97316',
+    statusColor: '#FBBF24',
+    time: '10:17 AM',
+    dotColor: '#FBBF24',
   },
   {
+    id: 'INC-0424',
     severity: 'Medium',
-    title: 'Suspicious DNS',
+    title: 'Suspicious Domain Lookup',
     source: 'evil-c2.org',
     detection: 'TF-IDF',
-    status: 'Open',
-    statusBg: 'rgba(239, 68, 68, 0.15)',
-    statusColor: '#EF4444',
-    time: '10:05',
-    dotColor: '#D4AF37',
+    status: 'Resolved',
+    statusColor: '#34D399',
+    time: '10:05 AM',
+    dotColor: '#60A5FA',
   },
 ];
 
 export function RecentIncidentsTable({ incidents, isLoading = false }: RecentIncidentsTableProps) {
   const displayItems =
-    incidents.length > 0
-      ? incidents.slice(0, 4).map((inc) => ({
-          severity: inc.severity || 'Medium',
-          title: inc.title || 'Security Anomaly',
+    incidents && incidents.length > 0
+      ? incidents.slice(0, 4).map((inc, i) => ({
+          id: inc.id || `INC-042${7 - i}`,
+          severity: inc.severity ? inc.severity.charAt(0).toUpperCase() + inc.severity.slice(1).toLowerCase() : 'Medium',
+          title: inc.title || 'Security Anomaly Detected',
           source: (inc.affected_ips && inc.affected_ips[0]) || (inc.affected_sources && inc.affected_sources[0]) || '198.51.100.45',
           detection: 'Isolation Forest',
           status: inc.status === 'resolved' ? 'Resolved' : inc.status === 'investigating' ? 'Investigating' : 'Open',
-          statusBg: inc.status === 'resolved' ? 'rgba(34, 197, 94, 0.15)' : inc.status === 'investigating' ? 'rgba(212, 175, 55, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-          statusColor: inc.status === 'resolved' ? '#22C55E' : inc.status === 'investigating' ? '#D4AF37' : '#EF4444',
+          statusColor: inc.status === 'resolved' ? '#34D399' : inc.status === 'investigating' ? '#FBBF24' : '#F87171',
           time: new Date(inc.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          dotColor: inc.severity === 'CRITICAL' ? '#EF4444' : inc.severity === 'HIGH' ? '#F97316' : '#D4AF37',
+          dotColor: inc.severity === 'CRITICAL' ? '#F87171' : inc.severity === 'HIGH' ? '#FBBF24' : '#60A5FA',
         }))
       : SAMPLE_INCIDENTS;
 
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '24px 28px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="space-y-4 font-sans h-full flex flex-col justify-between"
+      className="font-sans h-full flex flex-col justify-between"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[rgba(212,175,55,0.1)] pb-4">
+      <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-3">
         <div>
-          <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
+          <h2 className="text-base font-semibold text-white font-heading">
             Recent Incidents
           </h2>
-          <p className="text-xs text-[#D1CBC0] font-subheading font-light mt-1">
-            Latest security incidents requiring attention
+          <p className="text-xs text-[#94A3B8] font-subheading mt-0.5">
+            Active correlated incidents awaiting analyst review
           </p>
         </div>
-
         <Link
           href="/incidents"
-          className="text-xs text-[#D4AF37] hover:text-[#E5C07B] flex items-center gap-1 font-subheading font-medium transition-colors"
+          className="text-xs text-[#94A3B8] hover:text-white flex items-center gap-1 transition-colors"
         >
-          <span>View All</span>
+          <span>All Incidents</span>
           <ArrowRight size={13} />
         </Link>
       </div>
 
-      {/* Structured Table */}
-      <div className="overflow-x-auto my-auto">
-        <table className="w-full text-left text-xs font-sans">
-          <thead>
-            <tr className="text-[#8E877D] font-subheading uppercase text-[10px] tracking-wider border-b border-[rgba(212,175,55,0.08)]">
-              <th className="pb-2.5 font-medium">Severity</th>
-              <th className="pb-2.5 font-medium">Incident</th>
-              <th className="pb-2.5 font-medium">Source</th>
-              <th className="pb-2.5 font-medium">Detection</th>
-              <th className="pb-2.5 font-medium">Status</th>
-              <th className="pb-2.5 font-medium text-right">Time</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[rgba(212,175,55,0.06)] text-[11px]">
-            {displayItems.map((item, idx) => (
-              <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                <td className="py-2.5 whitespace-nowrap">
-                  <span className="flex items-center gap-1.5 font-subheading font-medium text-[#FAF9F5]">
-                    <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: item.dotColor }}
-                    />
-                    {item.severity}
-                  </span>
-                </td>
-                <td className="py-2.5 font-subheading font-medium text-[#FAF9F5] whitespace-nowrap">
+      {/* Disciplined, Non-colliding Item List */}
+      <div className="space-y-2.5 flex-1 my-auto overflow-hidden">
+        {displayItems.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              backgroundColor: '#0D1117',
+              border: '1px solid rgba(255, 255, 255, 0.04)',
+              borderRadius: 8,
+              padding: '10px 14px',
+            }}
+            className="flex items-center justify-between gap-3 hover:border-white/[0.12] transition-colors"
+          >
+            {/* Left: Severity indicator dot + Title + ID */}
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{ backgroundColor: item.dotColor }}
+                title={item.severity}
+              />
+              <div className="min-w-0">
+                <div className="text-xs font-medium text-white truncate leading-tight">
                   {item.title}
-                </td>
-                <td className="py-2.5 font-mono text-[#D1CBC0] whitespace-nowrap">
-                  {item.source}
-                </td>
-                <td className="py-2.5 font-subheading text-[#D1CBC0] whitespace-nowrap">
-                  {item.detection}
-                </td>
-                <td className="py-2.5 whitespace-nowrap">
-                  <span
-                    style={{
-                      backgroundColor: item.statusBg,
-                      color: item.statusColor,
-                    }}
-                    className="px-2 py-0.5 rounded text-[10px] font-semibold"
-                  >
-                    {item.status}
-                  </span>
-                </td>
-                <td className="py-2.5 font-mono text-[#8E877D] text-right whitespace-nowrap">
-                  {item.time}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="font-mono text-[11px] text-[#94A3B8]">{item.source}</span>
+                  <span className="text-[#64748B] text-[10px]">•</span>
+                  <span className="text-[10px] text-[#64748B] font-subheading">{item.detection}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Status badge + Time */}
+            <div className="flex items-center gap-3 shrink-0 text-right">
+              <span
+                style={{
+                  color: item.statusColor,
+                  backgroundColor: `${item.statusColor}14`,
+                  border: `1px solid ${item.statusColor}28`,
+                }}
+                className="text-[10px] font-medium px-2 py-0.5 rounded"
+              >
+                {item.status}
+              </span>
+              <span className="font-mono text-[11px] text-[#64748B] w-16 text-right">
+                {item.time}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

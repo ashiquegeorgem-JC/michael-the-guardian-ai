@@ -10,6 +10,7 @@ import {
   Clock, Flame, Target, BarChart3, TrendingUp, Info
 } from 'lucide-react';
 import type { ChainSummary, AttackChain } from '@/types';
+import { chartTooltipProps } from '@/lib/chartTheme';
 
 interface Props {
   summary: ChainSummary | null;
@@ -87,12 +88,12 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
 
   return (
     <div style={{
-      background: 'rgba(10,14,26,0.95)',
-      border: '1px solid rgba(59,130,246,0.25)',
+      background: '#11161E',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
       borderRadius: 16,
       padding: 24,
       marginBottom: 28,
-      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
     }}>
       {/* Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -129,13 +130,8 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
       </div>
 
       {/* KPI Stat Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: 12,
-        marginBottom: 24,
-      }}>
-        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 10, padding: '12px 16px' }}>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+        <div style={{ background: '#0D1117', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: 12, padding: '14px 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ color: '#64748B', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Total Chains</span>
             <Flame size={14} color="#3B82F6" />
@@ -143,7 +139,7 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
           <div style={{ color: '#F1F5F9', fontSize: 24, fontWeight: 800 }}>{summary.total_chains}</div>
         </div>
 
-        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ background: '#0D1117', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: 12, padding: '14px 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ color: '#60A5FA', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>New</span>
             <ShieldAlert size={14} color="#60A5FA" />
@@ -151,7 +147,7 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
           <div style={{ color: '#60A5FA', fontSize: 24, fontWeight: 800 }}>{newCount}</div>
         </div>
 
-        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(234,179,8,0.25)', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ background: '#0D1117', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: 12, padding: '14px 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ color: '#EAB308', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Investigating</span>
             <AlertTriangle size={14} color="#EAB308" />
@@ -159,7 +155,7 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
           <div style={{ color: '#EAB308', fontSize: 24, fontWeight: 800 }}>{investigatingCount}</div>
         </div>
 
-        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ background: '#0D1117', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: 12, padding: '14px 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ color: '#EF4444', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Confirmed</span>
             <AlertOctagon size={14} color="#EF4444" />
@@ -167,7 +163,7 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
           <div style={{ color: '#EF4444', fontSize: 24, fontWeight: 800 }}>{confirmedCount}</div>
         </div>
 
-        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(100,116,139,0.25)', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ background: '#0D1117', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: 12, padding: '14px 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ color: '#94A3B8', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>False Positives</span>
             <ShieldCheck size={14} color="#94A3B8" />
@@ -175,7 +171,7 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
           <div style={{ color: '#94A3B8', fontSize: 24, fontWeight: 800 }}>{falsePositiveCount}</div>
         </div>
 
-        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ background: '#0D1117', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: 12, padding: '14px 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ color: '#10B981', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Resolved</span>
             <CheckCircle2 size={14} color="#10B981" />
@@ -203,8 +199,10 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
                   <XAxis dataKey="name" stroke="#64748B" fontSize={10} tickLine={false} />
                   <YAxis stroke="#64748B" fontSize={10} allowDecimals={false} />
                   <Tooltip
-                    contentStyle={{ background: '#0F172A', border: '1px solid #334155', borderRadius: 8, fontSize: 12, color: '#F1F5F9' }}
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
                   />
                   <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                     {severityData.map((entry, index) => (
@@ -236,8 +234,10 @@ export function AttackChainSummaryAnalytics({ summary, loading, onSelectChain }:
                   <XAxis type="number" stroke="#64748B" fontSize={10} allowDecimals={false} />
                   <YAxis dataKey="stage" type="category" stroke="#64748B" fontSize={9} width={95} tickLine={false} />
                   <Tooltip
-                    contentStyle={{ background: '#0F172A', border: '1px solid #334155', borderRadius: 8, fontSize: 12, color: '#F1F5F9' }}
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
                   />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                     {stageData.map((entry, index) => (

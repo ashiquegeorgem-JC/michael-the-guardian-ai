@@ -46,11 +46,11 @@ export function InvestigationDrawer({
         style={{ width: typeof width === 'number' ? `${width}px` : width }}
       >
         <div
-          className="w-full flex flex-col bg-[#0C1119] border-l border-white/[0.08] shadow-2xl"
-          style={{ backgroundColor: '#0C1119' }}
+          className="w-full flex flex-col bg-[#11161E] border-l border-white/[0.08] shadow-2xl"
+          style={{ backgroundColor: '#11161E' }}
         >
           {/* Drawer Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.08] shrink-0 bg-[#080C12]">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.08] shrink-0 bg-[#0D1117]">
             <div>
               <h3 className="text-base font-semibold text-[#F5F7FA] tracking-tight">
                 {title}

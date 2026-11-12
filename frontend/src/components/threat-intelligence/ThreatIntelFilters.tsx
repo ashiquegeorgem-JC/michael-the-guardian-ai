@@ -32,13 +32,14 @@ export function ThreatIntelFilters({
   return (
     <div
       style={{
-        background: 'rgba(10, 14, 26, 0.9)',
-        border: '1px solid #1E2D4A',
-        borderRadius: 12,
-        padding: '14px 18px',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '20px 24px',
         display: 'flex',
         flexDirection: 'column',
-        gap: 12,
+        gap: 14,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
@@ -48,10 +49,10 @@ export function ThreatIntelFilters({
             display: 'flex',
             alignItems: 'center',
             gap: 8,
-            background: '#0D1424',
-            border: '1px solid #1E2D4A',
+            background: '#0D1117',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
             borderRadius: 8,
-            padding: '6px 12px',
+            padding: '8px 14px',
             flexGrow: 1,
             minWidth: 240,
           }}

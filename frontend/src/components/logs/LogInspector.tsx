@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Copy, Check, ShieldAlert, Sparkles, Terminal } from 'lucide-react';
+import { Copy, Check, ShieldAlert, Terminal } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { InvestigationDrawer } from '@/components/ui/InvestigationDrawer';
@@ -24,14 +24,6 @@ export function LogInspector({ log, onClose }: LogInspectorProps) {
     navigator.clipboard.writeText(log.raw_line);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleAskCopilot = () => {
-    router.push(
-      `/copilot?prompt=${encodeURIComponent(
-        `Analyze this log entry for security implications:\n${log.raw_line}`
-      )}`
-    );
   };
 
   return (
@@ -142,11 +134,11 @@ export function LogInspector({ log, onClose }: LogInspectorProps) {
           <Button
             variant="primary"
             size="md"
-            onClick={handleAskCopilot}
-            leftIcon={<Sparkles size={14} />}
+            onClick={handleCopy}
+            leftIcon={<Copy size={14} />}
             className="flex-1"
           >
-            Investigate with AI Copilot
+            {copied ? 'Copied Raw Log' : 'Copy Raw Log'}
           </Button>
           <Button variant="secondary" size="md" onClick={onClose}>
             Close

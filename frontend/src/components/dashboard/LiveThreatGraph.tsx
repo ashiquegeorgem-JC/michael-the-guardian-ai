@@ -59,163 +59,132 @@ export function LiveThreatGraph({ data, totalAnomalies = 0 }: LiveThreatGraphPro
           return {
             time: timeLabel,
             count: d.count,
-            anomaly_score: Number((baseScore * 100).toFixed(0)),
+            anomaly_score: Math.round(baseScore * 100),
           };
         });
 
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '24px 28px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="space-y-4 font-sans h-full flex flex-col justify-between"
+      className="flex flex-col justify-between h-full font-sans"
     >
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(212,175,55,0.1)] pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.06] pb-3 mb-4">
         <div>
-          <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
-            Live Threat Activity
-          </h2>
-          <p className="text-xs text-[#D1CBC0] font-subheading font-light mt-1">
-            Threat events and anomaly score over time
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-white font-heading">
+              Live Threat Activity
+            </h2>
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              Streaming
+            </span>
+          </div>
+          <p className="text-xs text-[#94A3B8] font-subheading mt-0.5">
+            Real-time telemetry event volume and anomalous risk velocity
           </p>
         </div>
 
-        {/* Legend & Selector */}
-        <div className="flex items-center gap-4 text-xs font-subheading">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-[#D1CBC0]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_rgba(212,175,55,0.8)]" />
-              Event Volume
-            </span>
-            <span className="flex items-center gap-1.5 text-[#D1CBC0]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8] shadow-[0_0_6px_rgba(56,189,248,0.8)]" />
-              Anomaly Score
-            </span>
+        {/* Legend + Time Range */}
+        <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
+            <span className="text-[#94A3B8]">Events</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#A78BFA]" />
+            <span className="text-[#94A3B8]">Anomaly Score</span>
           </div>
 
           <div
             style={{
-              backgroundColor: '#222C35',
-              border: '1px solid rgba(212, 175, 55, 0.18)',
+              backgroundColor: '#161D26',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: 6,
+              padding: '4px 10px',
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[#FAF9F5] font-medium cursor-pointer"
+            className="flex items-center gap-1 text-[#94A3B8] text-[11px] cursor-pointer hover:text-white"
           >
             <span>{timeRange}</span>
-            <ChevronDown size={13} className="text-[#D4AF37]" />
+            <ChevronDown size={12} />
           </div>
         </div>
       </div>
 
-      {/* Dual Gradient Area Chart */}
-      <div className="h-64 w-full pt-2">
+      {/* Chart */}
+      <div className="w-full h-[220px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={formattedData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-          >
+          <AreaChart data={formattedData} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
             <defs>
-              <linearGradient id="eventVolumeGoldGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#D4AF37" stopOpacity={0.0} />
-              </linearGradient>
-              <linearGradient id="anomalyScoreCyanGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.3} />
+              <linearGradient id="eventGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.25} />
                 <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0} />
               </linearGradient>
+              <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.0} />
+              </linearGradient>
             </defs>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(212, 175, 55, 0.08)"
-              vertical={false}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.04)" vertical={false} />
             <XAxis
               dataKey="time"
-              stroke="#8E877D"
-              fontSize={11}
-              tickLine={false}
-              axisLine={{ stroke: 'rgba(212, 175, 55, 0.14)' }}
-              tick={{ fill: '#D1CBC0', fontFamily: 'var(--font-mono)' }}
-            />
-            <YAxis
-              yAxisId="left"
-              stroke="#8E877D"
+              stroke="#64748B"
               fontSize={11}
               tickLine={false}
               axisLine={false}
-              tick={{ fill: '#D1CBC0', fontFamily: 'var(--font-mono)' }}
             />
             <YAxis
-              yAxisId="right"
-              orientation="right"
-              domain={[0, 100]}
-              stroke="#8E877D"
+              stroke="#64748B"
               fontSize={11}
               tickLine={false}
               axisLine={false}
-              tick={{ fill: '#D1CBC0', fontFamily: 'var(--font-mono)' }}
-              tickFormatter={(v) => `${v}%`}
             />
             <Tooltip
-              content={({ active, payload, label }) => {
+              content={({ active, payload }) => {
                 if (active && payload && payload.length) {
-                  const events = payload.find((p) => p.dataKey === 'count')?.value || 0;
-                  const score = payload.find((p) => p.dataKey === 'anomaly_score')?.value || 0;
                   return (
                     <div
                       style={{
-                        backgroundColor: '#222C35',
-                        border: '1px solid rgba(212, 175, 55, 0.35)',
-                        borderRadius: '10px',
-                        padding: '10px 14px',
-                        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.7)',
+                        backgroundColor: '#161D26',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        borderRadius: 6,
+                        padding: '8px 12px',
                       }}
-                      className="font-sans space-y-1"
+                      className="text-xs shadow-xl space-y-1"
                     >
-                      <div className="text-xs font-mono font-semibold text-[#FAF9F5]">
-                        {label}
+                      <div className="font-mono text-[#94A3B8]">{payload[0].payload.time}</div>
+                      <div className="text-[#38BDF8] font-medium">
+                        Events: <span className="font-mono">{payload[0].value}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
-                        <span className="text-[#D1CBC0]">Events:</span>
-                        <span className="font-mono font-bold text-[#FAF9F5]">{events}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
-                        <span className="text-[#D1CBC0]">Anomaly Score:</span>
-                        <span className="font-mono font-bold text-[#38BDF8]">
-                          {typeof score === 'number' ? (score / 100).toFixed(2) : score}
-                        </span>
-                      </div>
+                      {payload[1] && (
+                        <div className="text-[#A78BFA] font-medium">
+                          Anomaly: <span className="font-mono">{payload[1].value}%</span>
+                        </div>
+                      )}
                     </div>
                   );
                 }
                 return null;
               }}
             />
-
             <Area
-              yAxisId="left"
               type="monotone"
               dataKey="count"
-              stroke="#D4AF37"
-              strokeWidth={2.5}
-              fillOpacity={1}
-              fill="url(#eventVolumeGoldGrad)"
+              stroke="#38BDF8"
+              strokeWidth={1.75}
+              fill="url(#eventGrad)"
             />
-
             <Area
-              yAxisId="right"
               type="monotone"
               dataKey="anomaly_score"
-              stroke="#38BDF8"
-              strokeWidth={2.5}
-              fillOpacity={1}
-              fill="url(#anomalyScoreCyanGrad)"
+              stroke="#A78BFA"
+              strokeWidth={1.75}
+              fill="url(#scoreGrad)"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -223,5 +192,3 @@ export function LiveThreatGraph({ data, totalAnomalies = 0 }: LiveThreatGraphPro
     </div>
   );
 }
-
-export const LiveThreatActivityChart = LiveThreatGraph;

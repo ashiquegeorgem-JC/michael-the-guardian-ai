@@ -9,17 +9,8 @@ import {
   RefreshCw,
   Server,
   Database,
-  CheckCircle2,
-  Zap,
+  Radio,
 } from 'lucide-react';
-import { EventStream } from '@/components/monitoring/EventStream';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { MetricCard } from '@/components/ui/MetricCard';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { useWebSocket } from '@/hooks/useWebSocket';
-import { getSystemMetrics, getMetricHistory } from '@/lib/api';
-import { SystemMetrics } from '@/types';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -29,6 +20,21 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
+
+import {
+  PageShell,
+  Section,
+  SectionHeader,
+  MetricRow,
+  MetricItem,
+  DataPanel,
+} from '@/components/ui/primitives';
+
+import { EventStream } from '@/components/monitoring/EventStream';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { getSystemMetrics, getMetricHistory } from '@/lib/api';
+import { SystemMetrics } from '@/types';
+import { chartTooltipProps } from '@/lib/chartTheme';
 
 export default function MonitoringPage() {
   const { latestMetric, connected, events } = useWebSocket();
@@ -90,192 +96,377 @@ export default function MonitoringPage() {
     : 48;
 
   return (
-    <div className="space-y-6 pb-12 font-sans text-slate-100">
-      {/* 1. Page Header */}
-      <PageHeader
-        tag="Infrastructure Observability"
-        title="Live Monitoring"
-        description="Real-time host daemon telemetry, ingestion velocity, socket stream health, and CPU/memory utilization."
-        actions={
-          <div className="flex items-center gap-2">
-            <Badge variant={connected ? 'success' : 'warning'} dot size="sm">
-              {connected ? 'WS: STREAMING' : 'WS: POLLING'}
-            </Badge>
-            <Button
-              variant="secondary"
-              size="sm"
+    <PageShell>
+      {/* ── 1. PRIMARY MONITORING & TELEMETRY SECTION ──────────────────────── */}
+      <Section className="border-t-2 border-t-[#38BDF8]">
+        <SectionHeader
+          tag="HOST TELEMETRY"
+          title="Live Monitoring & Telemetry"
+          description="Real-time host daemon telemetry, ingestion velocity, socket broadcast health, and distributed subsystem utilization."
+          statusList={[
+            { label: connected ? 'WebSocket: Streaming (8000)' : 'WebSocket: Polling', status: connected ? 'online' : 'warning' },
+            { label: `${eps} Events/Sec Ingestion`, status: 'active' },
+            { label: 'Host Daemon: Normal', status: 'online' },
+          ]}
+          actions={
+            <button
               onClick={fetchStaticMetrics}
-              leftIcon={<RefreshCw size={13} />}
+              style={{
+                backgroundColor: '#111722',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                color: '#FFFFFF',
+                borderRadius: 8,
+                padding: '7px 14px',
+                fontSize: '0.78rem',
+              }}
+              className="flex items-center gap-2 hover:border-[#38BDF8] hover:bg-[#162030] transition-all cursor-pointer font-sans"
             >
-              Refresh Telemetry
-            </Button>
+              <RefreshCw size={13} className="text-[#38BDF8]" />
+              <span>Refresh Telemetry</span>
+            </button>
+          }
+        />
+
+        {/* ── Single Continuous Metric Row: CPU | Memory | Storage | Velocity ── */}
+        <div>
+          <div className="text-[11px] font-mono uppercase tracking-wider text-[#64748B] mb-2 px-1">
+            Resource Utilization Overview
           </div>
-        }
-      />
+          <MetricRow columns={4}>
+            <MetricItem
+              label="CPU Utilization"
+              value={`${currentCpu.toFixed(1)}%`}
+              progress={currentCpu}
+              progressColor="#38BDF8"
+              sub="8 cores active runtime"
+              icon={Cpu}
+            />
+            <MetricItem
+              label="Memory Usage"
+              value={`${currentMem.toFixed(1)}%`}
+              progress={currentMem}
+              progressColor="#A78BFA"
+              changeColor="#A78BFA"
+              sub="8.6 / 16.0 GB allocated"
+              icon={HardDrive}
+            />
+            <MetricItem
+              label="Storage Volume"
+              value={`${currentDisk.toFixed(1)}%`}
+              progress={currentDisk}
+              progressColor="#34D399"
+              sub="NVMe /var/log capacity"
+              icon={Database}
+            />
+            <MetricItem
+              label="Ingestion Velocity"
+              value={`${eps} EPS`}
+              progress={Math.min(100, eps * 2)}
+              progressColor="#F59E0B"
+              change={`${currentNet.toFixed(1)} MB/s`}
+              changeColor="#10B981"
+              sub="Optimal streaming velocity"
+              icon={Activity}
+            />
+          </MetricRow>
+        </div>
+      </Section>
 
-      {/* 2. Top KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <MetricCard
-          label="CPU Load"
-          value={`${currentCpu.toFixed(1)}%`}
-          subValue="8 cores active runtime"
-          icon={Cpu}
-          accentColor="#3B82F6"
-        />
-        <MetricCard
-          label="Memory Usage"
-          value={`${currentMem.toFixed(1)}%`}
-          subValue="8.6 / 16.0 GB allocated"
-          icon={HardDrive}
-          accentColor="#8B5CF6"
-        />
-        <MetricCard
-          label="Disk Storage"
-          value={`${currentDisk.toFixed(1)}%`}
-          subValue="NVMe /var/log volume"
-          icon={Database}
-          accentColor="#22B8FF"
-        />
-        <MetricCard
-          label="Ingestion Velocity"
-          value={`${eps} EPS`}
-          subValue={`${currentNet.toFixed(1)} MB/s throughput`}
-          icon={Activity}
-          accentColor="#22C55E"
-          trend={{ value: 'OPTIMAL', positive: true }}
-        />
-      </div>
-
-      {/* 3. Real-Time Resource Timeline Chart */}
-      <div
-        style={{
-          backgroundColor: '#0C1119',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '12px',
-          padding: '20px',
-        }}
-        className="space-y-3"
+      {/* ── 2. DEDICATED CPU & MEMORY TELEMETRY CHARTS ─────────────────────── */}
+      <Section
+        title="Host Compute & Memory Telemetry"
+        subtitle="Continuous 60s live sampling of processor execution workload and resident heap memory"
       >
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
-          <div>
-            <h3 className="text-sm font-semibold text-[#F5F7FA]">
-              Resource Utilization History
-            </h3>
-            <p className="text-xs text-[#A7B1C0] mt-0.5">
-              Continuous 60-second telemetry sampling
-            </p>
-          </div>
-          <div className="flex items-center gap-3 text-xs text-[#A7B1C0]">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-xs bg-[#3B82F6]" />
-              CPU %
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-xs bg-[#8B5CF6]" />
-              Memory %
-            </span>
-          </div>
-        </div>
-
-        <div className="h-64 w-full pt-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={history} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="cpuGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.0} />
-                </linearGradient>
-                <linearGradient id="memGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
-              <XAxis dataKey="time" stroke="#687589" fontSize={11} tickLine={false} tick={{ fill: '#A7B1C0' }} />
-              <YAxis stroke="#687589" fontSize={11} tickLine={false} tick={{ fill: '#A7B1C0' }} tickFormatter={(v) => `${v}%`} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#111823',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                  color: '#F5F7FA',
-                }}
-              />
-              <Area type="monotone" dataKey="cpu_percent" stroke="#3B82F6" strokeWidth={2} fill="url(#cpuGrad)" />
-              <Area type="monotone" dataKey="memory_percent" stroke="#8B5CF6" strokeWidth={2} fill="url(#memGrad)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* 4. Split View: Pipeline Stage Health + Real-Time Event Stream */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* Left: Pipeline Health (4 cols) */}
-        <div
-          className="lg:col-span-4 rounded-xl p-5 space-y-4"
-          style={{
-            backgroundColor: '#0C1119',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-          }}
-        >
-          <div className="border-b border-white/[0.06] pb-3">
-            <h3 className="text-sm font-semibold text-[#F5F7FA]">
-              Pipeline Component Status
-            </h3>
-            <p className="text-xs text-[#A7B1C0] mt-0.5">
-              Telemetry processing health
-            </p>
-          </div>
-
-          <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-lg bg-[#080C12] border border-white/[0.04] flex items-center justify-between">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* CPU Live Workload Chart (6 cols) */}
+          <div
+            style={{
+              backgroundColor: '#0A0E14',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 12,
+              padding: '22px',
+            }}
+            className="lg:col-span-6 flex flex-col justify-between space-y-4"
+          >
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <div>
-                <div className="font-medium text-[#F5F7FA]">Ingestion Daemon</div>
-                <div className="text-[10px] text-[#687589]">FastAPI Uvicorn Runtime</div>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#38BDF8]">
+                  CPU Utilization Curve
+                </span>
+                <p className="text-[11px] text-[#64748B] mt-0.5">8-core SMP execution thread load</p>
               </div>
-              <Badge variant="success" size="sm" dot>
-                Online
-              </Badge>
+              <span className="text-sm font-bold font-mono text-white">{currentCpu.toFixed(1)}%</span>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#080C12] border border-white/[0.04] flex items-center justify-between">
+            <div className="h-56 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={history} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="cpuAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                  <XAxis dataKey="time" stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
+                  />
+                  <Area type="monotone" dataKey="cpu_percent" stroke="#38BDF8" strokeWidth={2} fill="url(#cpuAreaGrad)" name="CPU Load" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Memory Live Workload Chart (6 cols) */}
+          <div
+            style={{
+              backgroundColor: '#0A0E14',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 12,
+              padding: '22px',
+            }}
+            className="lg:col-span-6 flex flex-col justify-between space-y-4"
+          >
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <div>
-                <div className="font-medium text-[#F5F7FA]">Log Parser & Regex</div>
-                <div className="text-[10px] text-[#687589]">Standardized ECS format</div>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#A78BFA]">
+                  Resident Memory Allocation
+                </span>
+                <p className="text-[11px] text-[#64748B] mt-0.5">Physical RAM active pages & cache buffers</p>
               </div>
-              <Badge variant="success" size="sm" dot>
-                Ready
-              </Badge>
+              <span className="text-sm font-bold font-mono text-white">{currentMem.toFixed(1)}%</span>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#080C12] border border-white/[0.04] flex items-center justify-between">
-              <div>
-                <div className="font-medium text-[#F5F7FA]">Isolation Forest Worker</div>
-                <div className="text-[10px] text-[#687589]">Scikit-Learn ML worker</div>
-              </div>
-              <Badge variant="success" size="sm" dot>
-                Active
-              </Badge>
-            </div>
-
-            <div className="p-3 rounded-lg bg-[#080C12] border border-white/[0.04] flex items-center justify-between">
-              <div>
-                <div className="font-medium text-[#F5F7FA]">Threat Intel Cache</div>
-                <div className="text-[10px] text-[#687589]">VirusTotal Provider v3</div>
-              </div>
-              <Badge variant="success" size="sm" dot>
-                Synced
-              </Badge>
+            <div className="h-56 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={history} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="memAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                  <XAxis dataKey="time" stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
+                  />
+                  <Area type="monotone" dataKey="memory_percent" stroke="#A78BFA" strokeWidth={2} fill="url(#memAreaGrad)" name="RAM Usage" />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
+      </Section>
 
-        {/* Right: Live Event Stream Bus (8 cols) */}
-        <div className="lg:col-span-8">
-          <EventStream events={events} connected={connected} />
+      {/* ── 3. DISK VOLUME & NETWORK THROUGHPUT ─────────────────────────────── */}
+      <Section
+        title="Storage Volume & Network Throughput"
+        subtitle="Disk partition occupancy and real-time streaming bandwidth utilization"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Disk Area Graph (6 cols) */}
+          <div
+            style={{
+              backgroundColor: '#0A0E14',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 12,
+              padding: '22px',
+            }}
+            className="lg:col-span-6 flex flex-col justify-between space-y-4"
+          >
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#34D399]">
+                  Disk I/O & Storage Capacity
+                </span>
+                <p className="text-[11px] text-[#64748B] mt-0.5">NVMe block device buffer utilization</p>
+              </div>
+              <span className="text-sm font-bold font-mono text-white">{currentDisk.toFixed(1)}% Used</span>
+            </div>
+
+            <div className="h-48 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={[
+                    { time: '00:00', disk: 40.2 },
+                    { time: '04:00', disk: 40.5 },
+                    { time: '08:00', disk: 41.1 },
+                    { time: '12:00', disk: 41.8 },
+                    { time: '16:00', disk: 41.9 },
+                    { time: '20:00', disk: 42.1 },
+                  ]}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="diskGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34D399" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#34D399" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                  <XAxis dataKey="time" stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
+                  />
+                  <Area type="monotone" dataKey="disk" stroke="#34D399" strokeWidth={2} fill="url(#diskGrad)" name="Disk Storage" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Network Inbound/Outbound Line Graph (6 cols) */}
+          <div
+            style={{
+              backgroundColor: '#0A0E14',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 12,
+              padding: '22px',
+            }}
+            className="lg:col-span-6 flex flex-col justify-between space-y-4"
+          >
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#38BDF8]">
+                  Network Ingress / Egress
+                </span>
+                <p className="text-[11px] text-[#64748B] mt-0.5">Socket streaming bandwidth velocity</p>
+              </div>
+              <span className="text-sm font-bold font-mono text-white">{currentNet.toFixed(1)} MB/s</span>
+            </div>
+
+            <div className="h-48 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={[
+                    { time: '00:00', inbound: 2.1, outbound: 0.8 },
+                    { time: '04:00', inbound: 1.4, outbound: 0.5 },
+                    { time: '08:00', inbound: 4.8, outbound: 1.9 },
+                    { time: '12:00', inbound: 6.2, outbound: 2.4 },
+                    { time: '16:00', inbound: 5.1, outbound: 2.0 },
+                    { time: '20:00', inbound: 3.4, outbound: 1.2 },
+                  ]}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="netInGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                  <XAxis dataKey="time" stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <Tooltip
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
+                  />
+                  <Area type="monotone" dataKey="inbound" stroke="#38BDF8" strokeWidth={2} fill="url(#netInGrad)" name="Ingress MB/s" />
+                  <Area type="monotone" dataKey="outbound" stroke="#A78BFA" strokeWidth={2} fill="transparent" name="Egress MB/s" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </Section>
+
+      {/* ── 3. REAL-TIME DAEMON EVENT BUS BOX (Landscape below graph) ──────── */}
+      <Section
+        title="Real-Time Daemon Event Bus"
+        subtitle="Asynchronous WebSocket broadcast pipeline streaming raw normalized security events"
+      >
+        <EventStream events={events} connected={connected} />
+      </Section>
+
+      {/* ── 4. PIPELINE COMPONENT STATUS (Landscape below Event Bus) ───────── */}
+      <Section
+        title="Pipeline Component Status"
+        subtitle="Distributed telemetry processing workers, normalization daemons and subsystem latency"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              title: 'Ingestion Daemon',
+              runtime: 'FastAPI Uvicorn Async',
+              status: 'Online',
+              latency: '0.4ms',
+              color: '#10B981',
+            },
+            {
+              title: 'Log Parser & Regex',
+              runtime: 'Standardized ECS Normalizer',
+              status: 'Ready',
+              latency: '1.2ms',
+              color: '#10B981',
+            },
+            {
+              title: 'Isolation Forest Worker',
+              runtime: 'Scikit-Learn Ensemble',
+              status: 'Active',
+              latency: '8.4ms',
+              color: '#38BDF8',
+            },
+            {
+              title: 'Threat Intel Cache',
+              runtime: 'VirusTotal Provider v3',
+              status: 'Synced',
+              latency: '34ms',
+              color: '#A78BFA',
+            },
+          ].map((comp) => (
+            <div
+              key={comp.title}
+              style={{
+                backgroundColor: '#0F141D',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: 12,
+                padding: '18px 20px',
+              }}
+              className="flex flex-col justify-between space-y-3 hover:border-white/15 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-xs text-white">
+                  {comp.title}
+                </span>
+                <span
+                  style={{
+                    color: comp.color,
+                    backgroundColor: `${comp.color}15`,
+                    border: `1px solid ${comp.color}30`,
+                  }}
+                  className="text-[10px] font-mono px-2 py-0.5 rounded"
+                >
+                  {comp.status}
+                </span>
+              </div>
+
+              <div>
+                <div className="text-[11px] text-[#94A3B8] font-subheading">
+                  {comp.runtime}
+                </div>
+                <div className="text-[10px] font-mono text-[#64748B] mt-1">
+                  Latency: {comp.latency}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+    </PageShell>
   );
 }

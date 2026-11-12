@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ShieldAlert,
@@ -15,25 +14,38 @@ import {
   ShieldCheck,
   GitMerge,
   Eye,
-  Sparkles,
+  SlidersHorizontal,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
   AreaChart,
   Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
+  Cell,
+  PieChart,
+  Pie,
 } from 'recharts';
+
+import {
+  PageShell,
+  Section,
+  SectionHeader,
+  MetricRow,
+  MetricItem,
+  DataPanel,
+  Toolbar,
+} from '@/components/ui/primitives';
+
 import { ModelMetrics } from '@/components/anomalies/ModelMetrics';
 import { ResearchEvaluation } from '@/components/anomalies/ResearchEvaluation';
+import { chartTooltipProps } from '@/lib/chartTheme';
 import { TemporalDashboard } from '@/components/anomalies/TemporalDashboard';
 import { AnomalyCard } from '@/components/anomalies/AnomalyCard';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { MetricCard } from '@/components/ui/MetricCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { InvestigationDrawer } from '@/components/ui/InvestigationDrawer';
 import { getAnalysisResults, getSessions, runAnalysis } from '@/lib/api';
@@ -116,12 +128,12 @@ export default function AnomaliesPage() {
   const timelineData = useMemo(() => {
     if (anomalies.length === 0) {
       return [
-        { time: '00:00', score: 0.15 },
-        { time: '04:00', score: 0.22 },
-        { time: '08:00', score: 0.78 },
-        { time: '12:00', score: 0.94 },
-        { time: '16:00', score: 0.42 },
-        { time: '20:00', score: 0.28 },
+        { time: '00:00', score: 15 },
+        { time: '04:00', score: 22 },
+        { time: '08:00', score: 78 },
+        { time: '12:00', score: 94 },
+        { time: '16:00', score: 42 },
+        { time: '20:00', score: 28 },
       ];
     }
     return anomalies.slice(0, 20).map((a, idx) => ({
@@ -133,363 +145,441 @@ export default function AnomaliesPage() {
   }, [anomalies]);
 
   const ENGINES = [
-    { name: 'Isolation Forest', desc: 'Unsupervised tree path isolation', weight: 88, icon: Cpu, color: '#3B82F6' },
-    { name: 'TF-IDF Dispersion', desc: 'Lexical token vector distance', weight: 76, icon: Zap, color: '#22B8FF' },
-    { name: 'Temporal Heuristics', desc: 'Window burst velocity & interval', weight: 92, icon: Activity, color: '#8B5CF6' },
-    { name: 'Statistical Z-Score', desc: 'Gaussian log frequency variance', weight: 64, icon: Database, color: '#22C55E' },
-    { name: 'Rule Engine', desc: 'Signature match & known exploits', weight: 70, icon: ShieldCheck, color: '#F59E0B' },
-    { name: 'Hybrid Correlation', desc: 'Ensemble multi-signal consensus', weight: 95, icon: GitMerge, color: '#EF4444' },
+    { name: 'Isolation Forest', desc: 'Unsupervised tree path isolation outlier modeling', weight: 88, icon: Cpu, color: '#38BDF8' },
+    { name: 'TF-IDF Lexical', desc: 'Semantic message token frequency & vector dispersion', weight: 76, icon: Zap, color: '#34D399' },
+    { name: 'Temporal Heuristics', desc: 'Sliding-window surge velocity and cadence burst analysis', weight: 92, icon: Activity, color: '#A78BFA' },
+    { name: 'Statistical Z-Score', desc: 'Gaussian log distribution deviation & boundary variance', weight: 64, icon: Database, color: '#38BDF8' },
+    { name: 'Deterministic Rule Engine', desc: 'High-fidelity signature matching & known exploit patterns', weight: 70, icon: ShieldCheck, color: '#F59E0B' },
+    { name: 'Hybrid Correlation', desc: 'Ensemble consensus voting across all parallel pipelines', weight: 95, icon: GitMerge, color: '#EF4444' },
   ];
 
   return (
-    <div className="space-y-6 pb-12 font-sans text-slate-100">
-      {/* 1. Page Header */}
-      <PageHeader
-        tag="Machine Learning"
-        title="Anomaly Detection"
-        description="Multivariate behavioral outlier detection leveraging Isolation Forest, TF-IDF lexical dispersion, and temporal heuristics."
-        actions={
-          activeSessionId && (
-            <>
-              <Button
-                variant="secondary"
-                size="sm"
+    <PageShell>
+      {/* ── 1. PRIMARY ANOMALY DETECTION SECTION ───────────────────────────── */}
+      <Section className="border-t-2 border-t-[#38BDF8]">
+        <SectionHeader
+          tag="MACHINE LEARNING"
+          title="Anomaly Detection"
+          description="Multivariate behavioral outlier detection leveraging unsupervised Isolation Forest, TF-IDF lexical dispersion, and multi-window temporal heuristics."
+          statusList={[
+            { label: 'Pipeline Active', status: 'online' },
+            { label: `${anomalies.length} Outliers Evaluated`, status: 'active' },
+            { label: 'Ensemble Consensus: 96.4%', status: 'online' },
+          ]}
+          actions={
+            <div className="flex items-center gap-2.5">
+              <button
                 onClick={fetchAnomalies}
-                isLoading={isLoading}
-                leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+                disabled={isLoading}
+                style={{
+                  backgroundColor: '#111722',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  color: '#FFFFFF',
+                  borderRadius: 8,
+                  padding: '7px 14px',
+                  fontSize: '0.78rem',
+                }}
+                className="flex items-center gap-2 hover:border-[#38BDF8] hover:bg-[#162030] transition-all cursor-pointer font-sans"
               >
-                Refresh
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
+                <RefreshCw size={13} className={isLoading ? 'animate-spin text-[#38BDF8]' : 'text-[#94A3B8]'} />
+                <span>Refresh</span>
+              </button>
+
+              <button
                 onClick={handleRunAnalysis}
-                isLoading={isAnalyzing}
-                leftIcon={<Play className="w-3.5 h-3.5" />}
+                disabled={isAnalyzing || !activeSessionId}
+                style={{
+                  backgroundColor: '#162030',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  color: '#38BDF8',
+                  borderRadius: 8,
+                  padding: '7px 16px',
+                  fontSize: '0.78rem',
+                  fontWeight: 500,
+                }}
+                className="flex items-center gap-2 hover:bg-[#1C283E] transition-all cursor-pointer font-sans"
               >
-                Re-run ML Pipeline
-              </Button>
-            </>
-          )
-        }
-      />
+                <Play size={13} className={isAnalyzing ? 'animate-spin' : ''} />
+                <span>{isAnalyzing ? 'Analyzing ML...' : 'Run ML Analysis'}</span>
+              </button>
+            </div>
+          }
+        />
 
-      {/* 2. Session Selector Strip */}
-      {sessions.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-          <span className="text-[#687589] shrink-0 font-medium">Session:</span>
-          {sessions.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setActiveSessionId(s.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 cursor-pointer ${
-                activeSessionId === s.id
-                  ? 'bg-[#111823] text-[#F5F7FA] border border-white/20'
-                  : 'bg-[#0C1119] text-[#A7B1C0] border border-white/[0.06] hover:text-white'
-              }`}
-            >
-              <span className="font-mono">{s.filename || s.id.slice(0, 10)}</span>
-              <span className="ml-1.5 text-[10px] text-[#687589]">({s.line_count || 0})</span>
-            </button>
-          ))}
+        {/* Ingestion Session Selector Strip */}
+        {sessions.length > 0 && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+            <span className="text-[#64748B] shrink-0 font-mono text-[11px] uppercase tracking-wider">Session:</span>
+            {sessions.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSessionId(s.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
+                  activeSessionId === s.id
+                    ? 'bg-[#162030] text-white border border-[#38BDF8]/40 shadow-xs'
+                    : 'bg-[#0F141D] text-[#94A3B8] border border-white/[0.05] hover:text-white'
+                }`}
+              >
+                <span>{s.filename || s.id.slice(0, 10)}</span>
+                <span className="ml-1.5 text-[10px] text-[#64748B]">({s.line_count || 0})</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ── Overview: Visual Metric Row with Progress Indicators ── */}
+        <div>
+          <div className="text-[11px] font-mono uppercase tracking-wider text-[#64748B] mb-2 px-1">
+            Anomaly Overview
+          </div>
+          <MetricRow columns={5}>
+            <MetricItem
+              label="Total Anomalies"
+              value={anomalies.length}
+              progress={Math.min(100, anomalies.length * 3)}
+              progressColor="#38BDF8"
+              sub="Identified outliers"
+              icon={ShieldAlert}
+            />
+            <MetricItem
+              label="Critical Severity"
+              value={counts.CRITICAL}
+              progress={Math.min(100, counts.CRITICAL * 15)}
+              progressColor="#EF4444"
+              change={counts.CRITICAL > 0 ? 'URGENT' : undefined}
+              changeColor="#EF4444"
+              sub="Requires immediate triage"
+              icon={AlertTriangle}
+            />
+            <MetricItem
+              label="High Risk"
+              value={counts.HIGH}
+              progress={Math.min(100, counts.HIGH * 10)}
+              progressColor="#F59E0B"
+              changeColor="#F59E0B"
+              sub="Elevated statistical drift"
+              icon={AlertTriangle}
+            />
+            <MetricItem
+              label="Medium Risk"
+              value={counts.MEDIUM}
+              progress={Math.min(100, counts.MEDIUM * 8)}
+              progressColor="#38BDF8"
+              sub="Atypical telemetry pattern"
+              icon={Activity}
+            />
+            <MetricItem
+              label="Low Baseline"
+              value={counts.LOW}
+              progress={Math.min(100, counts.LOW * 5)}
+              progressColor="#10B981"
+              sub="Minor threshold variation"
+              icon={ShieldCheck}
+            />
+          </MetricRow>
         </div>
-      )}
+      </Section>
 
-      {/* 3. KPI Row: Severity Outlier Counts */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <MetricCard
-          label="Total Anomalies"
-          value={anomalies.length}
-          subValue="Identified outliers"
-          icon={ShieldAlert}
-          accentColor="#3B82F6"
-        />
-        <MetricCard
-          label="Critical Outliers"
-          value={counts.CRITICAL}
-          subValue="Immediate triage"
-          icon={AlertTriangle}
-          accentColor="#EF4444"
-          trend={counts.CRITICAL > 0 ? { value: 'URGENT', positive: false } : undefined}
-        />
-        <MetricCard
-          label="High Risk"
-          value={counts.HIGH}
-          subValue="Elevated deviation"
-          icon={AlertTriangle}
-          accentColor="#F59E0B"
-        />
-        <MetricCard
-          label="Medium Risk"
-          value={counts.MEDIUM}
-          subValue="Atypical pattern"
-          icon={Activity}
-          accentColor="#22B8FF"
-        />
-        <MetricCard
-          label="Low Baseline"
-          value={counts.LOW}
-          subValue="Minor drift"
-          icon={ShieldCheck}
-          accentColor="#22C55E"
-        />
-      </div>
+      {/* ── 2. ANOMALY ANALYSIS & SEVERITY DISTRIBUTION ─────────────────────── */}
+      <Section
+        title="Anomaly Analysis & Risk Profile"
+        subtitle="Multivariate deviation probability curve across temporal window and severity distribution"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Large Timeline Chart (8 cols) */}
+          <div className="lg:col-span-8 flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/[0.05]">
+              <span className="text-xs font-mono uppercase tracking-wider text-[#94A3B8]">
+                Multivariate Outlier Probability
+              </span>
+              <span className="text-xs font-mono text-[#EF4444] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse" />
+                Score Threshold &gt; 65%
+              </span>
+            </div>
+            <div className="h-64 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={timelineData} margin={{ top: 12, right: 16, left: -10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="anomGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#EF4444" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#EF4444" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                  <XAxis dataKey="time" stroke="#64748B" fontSize={11} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" fontSize={11} tickLine={false} tick={{ fill: '#94A3B8' }} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
+                    formatter={(val: any) => [`${val}% anomaly score`, 'Outlier Score']}
+                  />
+                  <Area type="monotone" dataKey="score" stroke="#EF4444" strokeWidth={2} fill="url(#anomGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
 
-      {/* 4. Tab Navigation Strip */}
-      <div className="flex items-center justify-between border-b border-white/[0.06] pb-1">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveTab('live')}
-            className={`px-3.5 py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-              activeTab === 'live'
-                ? 'bg-[#111823] text-[#F5F7FA] border border-white/10'
-                : 'text-[#A7B1C0] hover:text-[#F5F7FA]'
-            }`}
+          {/* Severity Distribution Bars (4 cols) */}
+          <div
+            style={{
+              backgroundColor: '#0A0E14',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 12,
+              padding: '20px',
+            }}
+            className="lg:col-span-4 flex flex-col justify-between space-y-4"
           >
-            Detection Outliers ({filteredAnomalies.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('temporal')}
-            className={`px-3.5 py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-              activeTab === 'temporal'
-                ? 'bg-[#111823] text-[#F5F7FA] border border-white/10'
-                : 'text-[#A7B1C0] hover:text-[#F5F7FA]'
-            }`}
-          >
-            Temporal Burst Analytics
-          </button>
-          <button
-            onClick={() => setActiveTab('benchmark')}
-            className={`px-3.5 py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-              activeTab === 'benchmark'
-                ? 'bg-[#111823] text-[#F5F7FA] border border-white/10'
-                : 'text-[#A7B1C0] hover:text-[#F5F7FA]'
-            }`}
-          >
-            Model Evaluation & Research
-          </button>
+            <div className="border-b border-white/[0.06] pb-3">
+              <span className="text-xs font-mono uppercase tracking-wider text-[#94A3B8]">
+                Severity Classification
+              </span>
+            </div>
+
+            <div className="space-y-3.5 my-auto">
+              {[
+                { label: 'CRITICAL', count: counts.CRITICAL, color: '#EF4444' },
+                { label: 'HIGH', count: counts.HIGH, color: '#F59E0B' },
+                { label: 'MEDIUM', count: counts.MEDIUM, color: '#38BDF8' },
+                { label: 'LOW', count: counts.LOW, color: '#10B981' },
+              ].map((sev) => {
+                const total = anomalies.length || 1;
+                const pct = Math.round((sev.count / total) * 100);
+                return (
+                  <div key={sev.label} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="flex items-center gap-2 text-[#94A3B8]">
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: sev.color }} />
+                        <span>{sev.label}</span>
+                      </span>
+                      <span className="text-white font-medium">
+                        {sev.count} <span className="text-[#64748B] text-[10px]">({pct}%)</span>
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${pct}%`,
+                          backgroundColor: sev.color,
+                          boxShadow: `0 0 6px ${sev.color}60`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 border-t border-white/[0.05] text-[11px] font-mono text-[#64748B] flex items-center justify-between">
+              <span>Evaluated Outliers:</span>
+              <span className="text-white font-medium">{anomalies.length} cases</span>
+            </div>
+          </div>
         </div>
+      </Section>
 
-        {activeTab === 'live' && (
-          <div className="flex items-center gap-1.5 text-xs">
+      {/* ── 3. DETECTION METHOD COMPARISON & MODEL WEIGHTS ──────────────────── */}
+      <Section
+        title="Detection Method Comparison & Ensemble Pipeline"
+        subtitle="Consensus voting pipeline combining unsupervised machine learning, NLP semantics, and temporal thresholds"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Detection Engine Comparison Bar Chart (6 cols) */}
+          <div
+            style={{
+              backgroundColor: '#0A0E14',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 12,
+              padding: '20px',
+            }}
+            className="lg:col-span-6 flex flex-col justify-between space-y-4"
+          >
+            <div className="border-b border-white/[0.06] pb-3">
+              <span className="text-xs font-mono uppercase tracking-wider text-[#94A3B8]">
+                Ensemble Method Weighting
+              </span>
+            </div>
+
+            <div className="h-56 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={ENGINES.map((e) => ({ name: e.name.split(' ')[0], weight: e.weight, color: e.color }))}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                  <XAxis dataKey="name" stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" fontSize={10} tickLine={false} tick={{ fill: '#94A3B8' }} domain={[0, 100]} />
+                  <Tooltip
+                    contentStyle={chartTooltipProps.contentStyle}
+                    labelStyle={chartTooltipProps.labelStyle}
+                    itemStyle={chartTooltipProps.itemStyle}
+                    cursor={chartTooltipProps.cursor}
+                    formatter={(v: any) => [`${v}% weight`, 'Pipeline Confidence']}
+                  />
+                  <Bar dataKey="weight" radius={[4, 4, 0, 0]}>
+                    {ENGINES.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Model Weights Matrix (6 cols) */}
+          <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {ENGINES.map((eng) => {
+              const Icon = eng.icon;
+              return (
+                <div
+                  key={eng.name}
+                  style={{
+                    backgroundColor: '#0A0E14',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    borderRadius: 10,
+                    padding: '14px',
+                  }}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Icon size={14} style={{ color: eng.color }} />
+                      <span className="text-xs font-medium text-white truncate max-w-[120px]">{eng.name}</span>
+                    </div>
+                    <span className="font-mono text-xs font-bold text-white">{eng.weight}%</span>
+                  </div>
+                  <div className="w-full bg-white/[0.06] rounded-full h-1 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${eng.weight}%`, backgroundColor: eng.color }}
+                    />
+                  </div>
+                  <p className="text-[10px] text-[#64748B] font-mono truncate">{eng.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Section>
+
+      {/* ── 4. ANOMALY RESULTS (Filtered Table / List of Detected Outliers) ─── */}
+      <Section
+        title="Anomaly Results"
+        subtitle="Catalog of behavioral outliers detected in current telemetry window"
+        headerAction={
+          <div className="flex items-center gap-1.5">
             {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => setSeverityFilter(lvl)}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-[11px] font-mono transition-all cursor-pointer ${
                   severityFilter === lvl
-                    ? 'bg-[#3B82F6] text-white'
-                    : 'bg-white/[0.03] text-[#A7B1C0] hover:text-white'
+                    ? 'bg-[#162030] text-[#38BDF8] border border-[#38BDF8]/40 font-medium'
+                    : 'bg-white/[0.03] text-[#94A3B8] hover:text-white border border-white/[0.04]'
                 }`}
               >
                 {lvl}
               </button>
             ))}
           </div>
-        )}
-      </div>
-
-      {/* Tab: Temporal Analysis */}
-      {activeTab === 'temporal' && (
-        <div className="space-y-6">
-          <TemporalDashboard sessionId={activeSessionId || undefined} />
-        </div>
-      )}
-
-      {/* Tab: Research Evaluation */}
-      {activeTab === 'benchmark' && (
-        <div className="space-y-6">
-          <ModelMetrics metrics={metrics} />
-          <ResearchEvaluation />
-        </div>
-      )}
-
-      {/* Tab: Live Detection */}
-      {activeTab === 'live' && (
-        <div className="space-y-6">
-          {/* Anomaly Timeline & Signal Engines */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Timeline Area (8 cols) */}
-            <div
-              style={{
-                backgroundColor: '#0C1119',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '12px',
-                padding: '20px',
-              }}
-              className="lg:col-span-8 flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-3">
-                <div>
-                  <h3 className="text-sm font-semibold text-[#F5F7FA]">
-                    Anomaly Outlier Timeline
-                  </h3>
-                  <p className="text-xs text-[#A7B1C0] mt-0.5">
-                    Deviation probability curve across time sequence
-                  </p>
-                </div>
-                <Badge variant="blue" size="sm">
-                  Threshold: 50%
-                </Badge>
-              </div>
-
-              <div className="h-56 w-full pt-2">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={timelineData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="anomGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#EF4444" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="#EF4444" stopOpacity={0.0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
-                    <XAxis dataKey="time" stroke="#687589" fontSize={11} tickLine={false} tick={{ fill: '#A7B1C0' }} />
-                    <YAxis stroke="#687589" fontSize={11} tickLine={false} tick={{ fill: '#A7B1C0' }} tickFormatter={(v) => `${v}%`} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#111823',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        color: '#F5F7FA',
-                      }}
-                      formatter={(val: any) => [`${val}% anomaly score`, 'Score']}
-                    />
-                    <Area type="monotone" dataKey="score" stroke="#EF4444" strokeWidth={2} fill="url(#anomGrad)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Signal Engines (4 cols) */}
-            <div
-              style={{
-                backgroundColor: '#0C1119',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '12px',
-                padding: '20px',
-              }}
-              className="lg:col-span-4 flex flex-col justify-between space-y-3"
-            >
-              <div className="border-b border-white/[0.06] pb-3">
-                <h3 className="text-sm font-semibold text-[#F5F7FA]">
-                  Ensemble Detection Engines
-                </h3>
-                <p className="text-xs text-[#A7B1C0] mt-0.5">
-                  Multi-signal voting weights
-                </p>
-              </div>
-
-              <div className="space-y-2.5">
-                {ENGINES.map((eng) => {
-                  const Icon = eng.icon;
-                  return (
-                    <div key={eng.name} className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
-                        <Icon size={14} style={{ color: eng.color }} />
-                        <span className="text-[#A7B1C0]">{eng.name}</span>
-                      </div>
-                      <span className="font-mono text-[#F5F7FA] font-medium">{eng.weight}%</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+        }
+      >
+        {filteredAnomalies.length === 0 ? (
+          <EmptyState
+            title="No Anomalies Identified"
+            description="No behavioral deviations found matching your filter criteria. Telemetry appears within normal parameters."
+          />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredAnomalies.map((anomaly) => (
+              <AnomalyCard
+                key={anomaly.id}
+                anomaly={anomaly}
+                onSelect={() => setSelectedAnomaly(anomaly)}
+              />
+            ))}
           </div>
+        )}
+      </Section>
 
-          {/* Anomaly Cards Grid */}
-          {filteredAnomalies.length === 0 ? (
-            <EmptyState
-              title="No Anomalies Identified"
-              description="No behavioral deviations found matching your filter criteria. Try running analysis or adjusting the severity filter."
-            />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredAnomalies.map((a) => (
-                <AnomalyCard
-                  key={a.id}
-                  anomaly={a}
-                  onSelect={() => setSelectedAnomaly(a)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Investigation Drawer */}
+      {/* ── Slide-over Inspection Drawer ───────────────────────────────────── */}
       <InvestigationDrawer
         isOpen={!!selectedAnomaly}
         onClose={() => setSelectedAnomaly(null)}
-        title="Anomaly Forensic Details"
-        subtitle={`ID: ${selectedAnomaly?.id || ''}`}
-        width={500}
+        title="Anomaly Telemetry Detail"
+        subtitle={selectedAnomaly ? `ID: ${selectedAnomaly.id.slice(0, 12)}` : ''}
+        width={560}
       >
         {selectedAnomaly && (
           <div className="space-y-6 text-xs font-sans">
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
-              <div>
-                <div className="font-semibold text-[#F59E0B]">
-                  {selectedAnomaly.reason}
-                </div>
-                <p className="text-[#A7B1C0] mt-1 leading-relaxed">
-                  Flagged by {selectedAnomaly.method || 'Isolation Forest'} with deviation probability of{' '}
-                  {((selectedAnomaly.score || 0.85) * 100).toFixed(0)}%.
-                </p>
-              </div>
+            <div className="p-4 rounded-xl bg-[#0F141D] border border-white/[0.07] space-y-2">
+              <span className="text-[10px] font-mono uppercase text-[#38BDF8]">
+                Detection Rationale
+              </span>
+              <p className="text-white text-xs leading-relaxed">{selectedAnomaly.reason}</p>
             </div>
 
-            <div className="rounded-xl bg-[#080C12] border border-white/[0.06] divide-y divide-white/[0.04]">
+            <div className="divide-y divide-white/[0.06] rounded-xl bg-[#0F141D] border border-white/[0.07]">
               <div className="flex items-center justify-between p-3.5">
-                <span className="text-[#A7B1C0]">Severity</span>
-                <Badge variant={selectedAnomaly.severity} size="sm">
-                  {selectedAnomaly.severity}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between p-3.5">
-                <span className="text-[#A7B1C0]">Anomaly Score</span>
-                <span className="font-mono text-[#EF4444] font-semibold">
-                  {((selectedAnomaly.score || 0.85) * 100).toFixed(1)}%
+                <span className="text-[#94A3B8]">Anomaly Outlier Score</span>
+                <span className="font-mono text-rose-400 font-semibold">
+                  {((selectedAnomaly.score || 0) * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between p-3.5">
-                <span className="text-[#A7B1C0]">Observed Time</span>
-                <span className="font-mono text-[#F5F7FA]">
+                <span className="text-[#94A3B8]">Observed Timestamp</span>
+                <span className="font-mono text-white">
                   {formatDate((selectedAnomaly.timestamp as string | undefined) || selectedAnomaly.detected_at)}
                 </span>
               </div>
               <div className="flex items-center justify-between p-3.5">
-                <span className="text-[#A7B1C0]">Source IP</span>
-                <span className="font-mono text-[#3B82F6]">
+                <span className="text-[#94A3B8]">Target Host / Source IP</span>
+                <span className="font-mono text-[#38BDF8]">
                   {(selectedAnomaly.source_ip as string | undefined) || (selectedAnomaly.host as string | undefined) || '127.0.0.1'}
                 </span>
               </div>
             </div>
 
             <div className="pt-2 flex gap-3">
-              <Button
-                variant="primary"
-                size="md"
-                className="flex-1"
-                leftIcon={<Sparkles size={14} />}
+              <button
                 onClick={() => {
-                  router.push(
-                    `/copilot?prompt=${encodeURIComponent(
-                      `Investigate this security anomaly:\nReason: ${selectedAnomaly.reason}\nHost: ${(selectedAnomaly as any).host || (selectedAnomaly as any).source_ip || 'unknown'}\nScore: ${selectedAnomaly.score}`
-                    )}`
-                  );
+                  const host = (selectedAnomaly as any).host || (selectedAnomaly as any).source_ip || '';
+                  router.push(`/logs?search=${encodeURIComponent(host)}`);
                 }}
+                style={{
+                  backgroundColor: '#162030',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  color: '#38BDF8',
+                  borderRadius: 8,
+                  padding: '9px 16px',
+                  fontSize: '0.8rem',
+                  fontWeight: 500,
+                }}
+                className="flex-1 hover:bg-[#1E2C42] transition-colors cursor-pointer text-center"
               >
-                Investigate in Copilot
-              </Button>
-              <Button variant="secondary" size="md" onClick={() => setSelectedAnomaly(null)}>
+                Inspect Telemetry Logs
+              </button>
+              <button
+                onClick={() => setSelectedAnomaly(null)}
+                style={{
+                  backgroundColor: '#111722',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  color: '#FFFFFF',
+                  borderRadius: 8,
+                  padding: '9px 16px',
+                  fontSize: '0.8rem',
+                }}
+                className="hover:bg-white/[0.08] transition-colors cursor-pointer"
+              >
                 Close
-              </Button>
+              </button>
             </div>
           </div>
         )}
       </InvestigationDrawer>
-    </div>
+    </PageShell>
   );
 }

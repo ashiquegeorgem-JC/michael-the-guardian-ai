@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {
-  Sparkles,
+  FileText,
   Server,
   Globe,
   Copy,
@@ -35,15 +35,9 @@ export function IncidentDetail({ incident, onClose, onStatusChange }: IncidentDe
     setTimeout(() => setCopiedLog(null), 2000);
   };
 
-  const handleAskCopilot = () => {
-    const prompt = `Perform an in-depth forensic investigation of incident '${incident.title}'.
-Category: ${incident.category}
-Severity: ${incident.severity}
-Root Cause Hypothesis: ${incident.root_cause_hypothesis}
-Evidence logs:
-${incident.evidence_log_lines?.slice(0, 5).join('\n')}
-Provide a step-by-step mitigation strategy and threat actor attribution.`;
-    router.push(`/copilot?prompt=${encodeURIComponent(prompt)}`);
+  const handleViewLogs = () => {
+    const ip = incident.affected_ips?.[0] || incident.affected_sources?.[0] || '';
+    router.push(`/logs?keyword=${encodeURIComponent(ip)}`);
   };
 
   return (
@@ -146,11 +140,11 @@ Provide a step-by-step mitigation strategy and threat actor attribution.`;
           <Button
             variant="primary"
             size="md"
-            onClick={handleAskCopilot}
-            leftIcon={<Sparkles size={14} />}
+            onClick={handleViewLogs}
+            leftIcon={<FileText size={14} />}
             className="flex-1"
           >
-            Investigate with AI Copilot
+            View Incident Logs
           </Button>
           <Button variant="secondary" size="md" onClick={onClose}>
             Close

@@ -1,142 +1,109 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 interface LiveEventConsoleProps {
   events: string[];
   wsConnected: boolean;
 }
 
-const BADGE_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  CRITICAL: {
-    bg: 'rgba(239, 68, 68, 0.15)',
-    text: '#EF4444',
-    border: 'rgba(239, 68, 68, 0.3)',
-  },
-  IOC: {
-    bg: 'rgba(212, 175, 55, 0.15)',
-    text: '#D4AF37',
-    border: 'rgba(212, 175, 55, 0.35)',
-  },
-  INCIDENT: {
-    bg: 'rgba(167, 139, 250, 0.15)',
-    text: '#A78BFA',
-    border: 'rgba(167, 139, 250, 0.3)',
-  },
-  TEMPORAL: {
-    bg: 'rgba(245, 158, 11, 0.15)',
-    text: '#F59E0B',
-    border: 'rgba(245, 158, 11, 0.3)',
-  },
-  INTEL: {
-    bg: 'rgba(34, 197, 94, 0.15)',
-    text: '#22C55E',
-    border: 'rgba(34, 197, 94, 0.3)',
-  },
+const BADGE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
+  CRITICAL: { bg: 'rgba(248, 113, 113, 0.12)', text: '#F87171', label: 'CRIT' },
+  IOC:      { bg: 'rgba(251, 191, 36, 0.12)',  text: '#FBBF24', label: 'IOC'  },
+  INCIDENT: { bg: 'rgba(167, 139, 250, 0.12)', text: '#A78BFA', label: 'INC'  },
+  TEMPORAL: { bg: 'rgba(96, 165, 250, 0.12)',  text: '#60A5FA', label: 'TIME' },
+  INTEL:    { bg: 'rgba(52, 211, 153, 0.12)',  text: '#34D399', label: 'INTEL'},
 };
 
+const TEXT_COLORS: Record<string, string> = {
+  CRITICAL: '#F87171',
+  IOC:      '#FBBF24',
+  INCIDENT: '#A78BFA',
+  TEMPORAL: '#94A3B8',
+  INTEL:    '#34D399',
+};
+
+const SAMPLE_EVENTS = [
+  { time: '12:00:00', type: 'CRITICAL', msg: '[ERROR] Authentication failed for user admin from 10.0.0.7' },
+  { time: '12:00:00', type: 'TEMPORAL', msg: '[WARNING] High memory usage detected: 82.7%' },
+  { time: '12:00:00', type: 'TEMPORAL', msg: '[WARNING] High memory usage detected: 82.8%' },
+  { time: '12:00:00', type: 'CRITICAL', msg: '[ERROR] Authentication failed for user admin from 10.0.0.50' },
+  { time: '12:00:00', type: 'CRITICAL', msg: '[ERROR] Authentication failed for user admin from 10.0.0.80' },
+  { time: '12:00:00', type: 'IOC',      msg: '[CRITICAL] Disk space low on /dev/sda1: 86% used' },
+];
+
 export function LiveEventConsole({ events, wsConnected }: LiveEventConsoleProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const sampleEvents = [
-    {
-      time: '10:42:18',
-      type: 'CRITICAL',
-      msg: 'SSH brute-force behaviour detected from 198.51.100.45',
-    },
-    {
-      time: '10:42:21',
-      type: 'IOC',
-      msg: 'IPv4 indicator extracted: 198.51.100.45',
-    },
-    {
-      time: '10:42:23',
-      type: 'INCIDENT',
-      msg: 'Incident INC-0427 created (Brute Force Attack)',
-    },
-    {
-      time: '10:42:27',
-      type: 'TEMPORAL',
-      msg: 'Authentication burst detected (12 attempts / 60s)',
-    },
-    {
-      time: '10:42:31',
-      type: 'INTEL',
-      msg: 'Threat intelligence lookup completed (Malicious)',
-    },
-  ];
-
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '24px 28px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="space-y-4 font-sans h-full flex flex-col justify-between"
+      className="font-sans h-full flex flex-col"
     >
-      {/* Console Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(212,175,55,0.1)] pb-4">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3 mb-3">
         <div>
-          <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
-            Live Security Event Stream
-          </h2>
-          <p className="text-xs text-[#D1CBC0] font-subheading font-light mt-1">
-            Real-time security events from the detection pipeline
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-white font-heading">
+              Live Security Events
+            </h2>
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              SOC Feed
+            </span>
+          </div>
+          <p className="text-xs text-[#94A3B8] font-subheading mt-0.5">
+            Real-time ingested system logs and alert triggers
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-subheading">
+        <div className="flex items-center gap-1.5 text-[11px]">
           <span
-            className="w-2 h-2 rounded-full"
-            style={{
-              backgroundColor: wsConnected ? '#22C55E' : '#D4AF37',
-              boxShadow: wsConnected ? '0 0 6px #22C55E' : '0 0 6px #D4AF37',
-            }}
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: wsConnected ? '#34D399' : '#FBBF24' }}
           />
-          <span className="text-[#D1CBC0] text-[11px]">
+          <span style={{ color: wsConnected ? '#34D399' : '#FBBF24' }}>
             {wsConnected ? 'Streaming Live' : 'Polling'}
           </span>
         </div>
       </div>
 
-      {/* Event Stream Rows */}
-      <div className="space-y-2.5 overflow-hidden font-mono text-xs my-auto">
-        {sampleEvents.map((item, idx) => {
-          const badgeCfg = BADGE_STYLES[item.type] || BADGE_STYLES.CRITICAL;
+      {/* Event Log — monospaced, clean */}
+      <div className="flex-1 overflow-y-auto space-y-1 font-mono text-[12px]">
+        {SAMPLE_EVENTS.map((item, idx) => {
+          const cfg = BADGE_CONFIG[item.type] || BADGE_CONFIG.CRITICAL;
+          const textColor = TEXT_COLORS[item.type] || '#94A3B8';
 
           return (
             <div
               key={idx}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#141A1F] border border-[rgba(212,175,55,0.06)] hover:border-[rgba(212,175,55,0.15)] transition-colors"
+              className="flex items-start gap-3 py-1 border-b border-white/[0.03] hover:bg-white/[0.015] transition-colors"
             >
-              <span className="text-[#8E877D] text-[11px] shrink-0">
-                {item.time}
-              </span>
-
+              <span className="text-[#64748B] text-[11px] shrink-0 mt-0.5">{item.time}</span>
               <span
-                style={{
-                  backgroundColor: badgeCfg.bg,
-                  color: badgeCfg.text,
-                  border: `1px solid ${badgeCfg.border}`,
-                }}
-                className="text-[9px] px-2 py-0.5 rounded font-bold uppercase shrink-0"
+                style={{ backgroundColor: cfg.bg, color: cfg.text }}
+                className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 mt-0.5 w-9 text-center"
               >
-                {item.type}
+                {cfg.label}
               </span>
-
-              <span className="text-[#FAF9F5] text-[11px] truncate leading-tight">
+              <span style={{ color: textColor }} className="leading-snug">
                 {item.msg}
               </span>
             </div>
           );
         })}
+      </div>
+
+      {/* Footer Status */}
+      <div className="flex items-center justify-between pt-3 mt-2 border-t border-white/[0.05] text-[11px] text-[#64748B]">
+        <span className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          Status: Streaming Live
+        </span>
+        <span className="font-mono">Buffer: {SAMPLE_EVENTS.length} events</span>
       </div>
     </div>
   );

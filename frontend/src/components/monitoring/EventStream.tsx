@@ -37,24 +37,24 @@ export function EventStream({ events, connected }: EventStreamProps) {
   return (
     <div
       style={{
-        backgroundColor: '#0C1119',
+        backgroundColor: '#11161E',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="h-[500px] flex flex-col font-sans"
+      className="h-[500px] flex flex-col font-sans overflow-hidden"
     >
       {/* Header */}
-      <div className="p-4 border-b border-white/[0.06] flex items-center justify-between bg-[#080C12]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[#3B82F6]">
+      <div className="p-4 sm:p-5 border-b border-white/[0.07] flex items-center justify-between bg-[#0D1117]">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/25 flex items-center justify-center text-[#38BDF8]">
             <Terminal size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-[#F5F7FA]">
+            <h3 className="text-sm font-heading font-semibold text-white tracking-wide">
               Real-Time Daemon Event Bus
             </h3>
-            <p className="text-xs text-[#A7B1C0]">
+            <p className="text-xs text-[#94A3B8] font-subheading">
               Low-latency WebSocket event ingestion stream
             </p>
           </div>

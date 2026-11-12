@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
-import { ShieldCheck, Sparkles } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -39,22 +39,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         height: '100vh',
         width: '100vw',
         overflow: 'hidden',
-        background: 'var(--background)',
+        background: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
       }}
     >
-      {/* ── Signature Bethesda-Style Announcement & Defense Ribbon ──────────── */}
+      {/* ── Minimalist Top Status Ticker ──────────────────────────────────── */}
       <div
         style={{
-          height: 32,
-          backgroundColor: '#171E24',
-          borderBottom: '1px solid rgba(212, 175, 55, 0.18)',
+          height: 28,
+          backgroundColor: '#0A0E13',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 24px',
-          fontSize: '0.74rem',
-          fontFamily: 'var(--font-subheading)',
-          color: '#FAF9F5',
+          fontSize: '0.72rem',
+          color: 'var(--text-secondary)',
           flexShrink: 0,
           zIndex: 50,
         }}
@@ -62,30 +62,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span
             style={{
-              width: 7,
-              height: 7,
+              width: 6,
+              height: 6,
               borderRadius: '50%',
-              backgroundColor: '#D4AF37',
-              boxShadow: '0 0 8px rgba(212, 175, 55, 0.8)',
+              backgroundColor: '#34D399',
               display: 'inline-block',
             }}
-            className="animate-pulse"
           />
-          <span style={{ fontWeight: 600, color: '#D4AF37', letterSpacing: '0.04em' }}>
-            MICHAEL DEFENSE POSTURE:
+          <span className="font-subheading" style={{ fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>
+            MICHAEL GUARDIAN
           </span>
-          <span style={{ color: '#D1CBC0', fontWeight: 400 }}>
-            Guardian Surveillance & Autonomous ML Heuristics Active
+          <span style={{ color: 'var(--text-muted)' }}>•</span>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 400 }}>
+            Autonomous Surveillance & Behavioral Telemetry Active
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#8E877D', fontSize: '0.7rem' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <ShieldCheck size={13} color="#D4AF37" />
-            <span style={{ color: '#D1CBC0' }}>Threat Posture: Guarded (14%)</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, color: 'var(--text-muted)', fontSize: '0.7rem' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <ShieldCheck size={12} color="#34D399" />
+            <span style={{ color: 'var(--text-secondary)' }}>Threat Level: Guarded (14%)</span>
           </span>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <span style={{ color: '#D4AF37', fontWeight: 600 }}>v1.0.0 Production</span>
+          <span style={{ opacity: 0.3 }}>|</span>
+          <span className="font-mono" style={{ color: 'var(--text-muted)' }}>v1.0.0</span>
         </div>
       </div>
 
@@ -98,7 +97,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           minHeight: 0,
         }}
       >
+        {/* Left Sidebar */}
         <Sidebar isCollapsed={isCollapsed} onToggleCollapse={handleToggle} />
+
+        {/* Right Main Content Area */}
         <div
           style={{
             flex: 1,
@@ -106,20 +108,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             flexDirection: 'column',
             overflow: 'hidden',
             minWidth: 0,
-            transition: 'all 0.28s cubic-bezier(0.2, 0, 0, 1)',
+            backgroundColor: 'var(--bg-primary)',
           }}
         >
+          {/* Topbar */}
           <Topbar isCollapsed={isCollapsed} onToggleSidebar={handleToggle} />
+
+          {/* Scrollable Viewport with Minimalist Breathing Room */}
           <main
+            id="main-content"
             style={{
               flex: 1,
               overflowY: 'auto',
               overflowX: 'hidden',
-              background: 'var(--background)',
-              padding: '28px 36px',
+              padding: '32px 32px 64px 32px',
+              backgroundColor: 'var(--bg-primary)',
             }}
           >
-            {children}
+            <div style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
+              {children}
+            </div>
           </main>
         </div>
       </div>

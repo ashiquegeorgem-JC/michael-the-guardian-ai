@@ -5,6 +5,7 @@ import {
   CartesianGrid, Tooltip, BarChart, Bar, Cell,
 } from 'recharts';
 import { formatNumber } from '@/lib/utils';
+import { chartTooltipProps } from '@/lib/chartTheme';
 
 // ── Log Volume Area Chart ─────────────────────────────────────────────────
 
@@ -36,9 +37,10 @@ export function LogVolumeChart({ data }: { data: VolumePoint[] }) {
         <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#64748B' }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
         <YAxis tickFormatter={formatNumber} tick={{ fontSize: 10, fill: '#64748B' }} tickLine={false} axisLine={false} />
         <Tooltip
-          contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12 }}
-          labelStyle={{ color: 'var(--text-secondary)' }}
-          itemStyle={{ color: '#93C5FD' }}
+          contentStyle={chartTooltipProps.contentStyle}
+          labelStyle={chartTooltipProps.labelStyle}
+          itemStyle={chartTooltipProps.itemStyle}
+          cursor={chartTooltipProps.cursor}
         />
         <Area type="monotone" dataKey="count" stroke="#3B82F6" strokeWidth={2} fill="url(#blueGrad)" dot={false} activeDot={{ r: 4, fill: '#3B82F6' }} />
       </AreaChart>
@@ -69,8 +71,10 @@ export function SeverityBar({ data }: { data: SevData[] }) {
         <XAxis dataKey="severity" tick={{ fontSize: 11, fill: '#64748B' }} tickLine={false} axisLine={false} />
         <YAxis tick={{ fontSize: 10, fill: '#64748B' }} tickLine={false} axisLine={false} />
         <Tooltip
-          contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12 }}
-          cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
+          contentStyle={chartTooltipProps.contentStyle}
+          labelStyle={chartTooltipProps.labelStyle}
+          itemStyle={chartTooltipProps.itemStyle}
+          cursor={chartTooltipProps.cursor}
         />
         <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={48}>
           {data.map((entry) => (
@@ -106,8 +110,10 @@ export function LevelDistBar({ data }: { data: LevelData[] }) {
         <XAxis type="number" tick={{ fontSize: 10, fill: '#64748B' }} tickLine={false} axisLine={false} tickFormatter={formatNumber} />
         <YAxis type="category" dataKey="level" tick={{ fontSize: 11, fill: '#94A3B8' }} tickLine={false} axisLine={false} width={56} />
         <Tooltip
-          contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12 }}
-          cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
+          contentStyle={chartTooltipProps.contentStyle}
+          labelStyle={chartTooltipProps.labelStyle}
+          itemStyle={chartTooltipProps.itemStyle}
+          cursor={chartTooltipProps.cursor}
         />
         <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={20}>
           {data.map((entry) => (

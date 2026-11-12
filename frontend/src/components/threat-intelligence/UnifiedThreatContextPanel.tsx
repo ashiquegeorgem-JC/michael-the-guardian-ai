@@ -49,13 +49,13 @@ export function UnifiedThreatContextPanel({ ioc, onClose }: UnifiedThreatContext
   return (
     <div
       style={{
-        background: 'rgba(10, 14, 26, 0.95)',
-        border: '1px solid #1E2D4A',
-        borderRadius: 14,
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
     >
       {/* Top Header */}

@@ -73,11 +73,11 @@ export function IOCDetailPanel({ ioc: initialIoc, onClose, onStatusUpdated }: Pr
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       style={{
-        background: 'rgba(10,14,26,0.97)',
-        border: `1px solid ${typeColor}30`,
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
         borderRadius: 16,
         overflow: 'hidden',
-        boxShadow: `0 0 32px ${typeColor}10`,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',

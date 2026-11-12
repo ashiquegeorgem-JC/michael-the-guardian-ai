@@ -4,9 +4,8 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import {
   Bell,
+  Calendar,
   Radio,
-  ChevronDown,
-  Menu,
 } from 'lucide-react';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
@@ -39,10 +38,6 @@ const PAGE_META: Record<string, { title: string; subtitle: string }> = {
     title: 'Threat Intelligence',
     subtitle: 'Enriched external reputation scoring, provider signals and IOC correlation',
   },
-  '/copilot': {
-    title: 'AI Copilot',
-    subtitle: 'Context-aware LLM security analyst and automated incident investigation',
-  },
   '/monitoring': {
     title: 'Live Monitoring',
     subtitle: 'Host telemetry, event ingestion velocity and WebSocket broadcast streams',
@@ -74,9 +69,9 @@ export function Topbar({ isCollapsed = false, onToggleSidebar }: TopbarProps) {
   return (
     <header
       style={{
-        height: 68,
-        backgroundColor: '#171E24',
-        borderBottom: '1px solid rgba(212, 175, 55, 0.14)',
+        height: 64,
+        backgroundColor: '#0A0E13',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -87,204 +82,126 @@ export function Topbar({ isCollapsed = false, onToggleSidebar }: TopbarProps) {
         flexShrink: 0,
       }}
     >
-      {/* Left: Sidebar Toggle + Page Title & Subtitle */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        {isCollapsed && onToggleSidebar && (
-          <button
-            onClick={onToggleSidebar}
-            title="Expand sidebar"
-            style={{
-              background: 'rgba(212, 175, 55, 0.08)',
-              border: '1px solid rgba(212, 175, 55, 0.2)',
-              borderRadius: 8,
-              padding: '6px',
-              color: '#D4AF37',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Menu size={16} />
-          </button>
-        )}
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <h1
-            className="font-heading font-semibold"
-            style={{
-              fontSize: '1.25rem',
-              letterSpacing: '-0.01em',
-              color: '#FAF9F5',
-              lineHeight: 1.2,
-              margin: 0,
-            }}
-          >
-            {page.title}
-          </h1>
-          <p
-            className="font-subheading font-light"
-            style={{
-              fontSize: '0.8rem',
-              color: '#D1CBC0',
-              margin: 0,
-              letterSpacing: '0.01em',
-            }}
-          >
-            {page.subtitle}
-          </p>
-        </div>
+      {/* ── Left: Heading (Times New Roman) & Subheading (Inter) ─────────── */}
+      <div>
+        <h1
+          className="font-heading"
+          style={{
+            fontFamily: "'Times New Roman', Times, serif",
+            fontSize: '1.35rem',
+            fontWeight: 400,
+            color: '#FFFFFF',
+            letterSpacing: '0.01em',
+            margin: 0,
+            lineHeight: 1.2,
+          }}
+        >
+          {page.title}
+        </h1>
+        <p
+          className="font-subheading"
+          style={{
+            fontSize: '0.78rem',
+            color: 'var(--text-secondary)',
+            margin: 0,
+            marginTop: 2,
+            lineHeight: 1.3,
+          }}
+        >
+          {page.subtitle}
+        </p>
       </div>
 
-      {/* Right: Live Telemetry Indicators & Profile Pill */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        {/* Status: Live Indicator Pill */}
+      {/* ── Right: Minimalist Controls, Date Pill, Live State ─────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        {/* Minimalist Date Pill */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 7,
+            gap: 8,
+            backgroundColor: '#11161E',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: 6,
             padding: '5px 12px',
-            backgroundColor: 'rgba(34, 197, 94, 0.08)',
-            border: '1px solid rgba(34, 197, 94, 0.28)',
-            borderRadius: 99,
-            fontSize: '0.74rem',
-            fontWeight: 600,
-            color: '#22C55E',
-            fontFamily: 'var(--font-subheading)',
+            fontSize: '0.76rem',
+            color: 'var(--text-secondary)',
           }}
+          className="hidden sm:flex"
         >
-          <span
-            style={{
-              width: 7,
-              height: 7,
-              backgroundColor: '#22C55E',
-              borderRadius: '50%',
-              display: 'inline-block',
-              boxShadow: '0 0 8px rgba(34, 197, 94, 0.8)',
-            }}
-          />
-          Live
+          <Calendar size={13} color="var(--text-muted)" />
+          <span style={{ color: '#FFFFFF', fontWeight: 500 }}>Live Session</span>
+          <span style={{ color: 'var(--text-muted)' }}>|</span>
+          <span style={{ fontSize: '0.72rem' }}>Past 24 Hours</span>
         </div>
 
-        {/* Status: WebSocket Pill in Celestial Gold */}
+        {/* WebSocket Live Status */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 7,
-            padding: '5px 12px',
-            backgroundColor: connected
-              ? 'rgba(212, 175, 55, 0.08)'
-              : 'rgba(245, 158, 11, 0.08)',
-            border: connected
-              ? '1px solid rgba(212, 175, 55, 0.3)'
-              : '1px solid rgba(245, 158, 11, 0.3)',
-            borderRadius: 99,
-            fontSize: '0.74rem',
-            fontWeight: 500,
-            color: connected ? '#D4AF37' : '#F59E0B',
-            fontFamily: 'var(--font-subheading)',
+            gap: 6,
+            padding: '4px 10px',
+            borderRadius: 6,
+            backgroundColor: connected ? 'rgba(52, 211, 153, 0.08)' : 'rgba(248, 113, 113, 0.08)',
+            border: connected ? '1px solid rgba(52, 211, 153, 0.2)' : '1px solid rgba(248, 113, 113, 0.2)',
+            fontSize: '0.72rem',
+            color: connected ? '#34D399' : '#F87171',
           }}
         >
-          <Radio size={13} color={connected ? '#D4AF37' : '#F59E0B'} />
-          <span>{connected ? 'WebSocket Connected' : 'WebSocket Polling'}</span>
+          <Radio size={12} className={connected ? 'animate-pulse' : ''} />
+          <span>{connected ? 'Live Stream' : 'Connecting'}</span>
         </div>
 
-        {/* Notifications Icon Button */}
+        {/* Notification Bell */}
         <button
-          title="Security Notifications"
           style={{
             position: 'relative',
+            background: 'transparent',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: 6,
+            width: 32,
+            height: 32,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 36,
-            height: 36,
-            backgroundColor: '#1C242B',
-            border: '1px solid rgba(212, 175, 55, 0.15)',
-            borderRadius: 10,
-            color: '#D1CBC0',
+            color: 'var(--text-secondary)',
             cursor: 'pointer',
-            transition: 'all 0.15s ease',
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#FAF9F5';
-            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)';
-            e.currentTarget.style.backgroundColor = '#222C35';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#D1CBC0';
-            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.15)';
-            e.currentTarget.style.backgroundColor = '#1C242B';
-          }}
+          className="hover:text-white hover:border-white/20"
+          title="Notifications"
         >
-          <Bell size={16} />
+          <Bell size={14} />
           <span
             style={{
               position: 'absolute',
-              top: 8,
-              right: 8,
-              width: 6,
-              height: 6,
+              top: 7,
+              right: 7,
+              width: 5,
+              height: 5,
               borderRadius: '50%',
-              backgroundColor: '#D4AF37',
-              boxShadow: '0 0 6px rgba(212, 175, 55, 0.8)',
+              backgroundColor: '#34D399',
             }}
           />
         </button>
 
-        {/* User / SOC Pill with Archangel Michael Avatar */}
+        {/* User Avatar Circle */}
         <div
           style={{
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            backgroundColor: '#161D26',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
             display: 'flex',
             alignItems: 'center',
-            gap: 9,
-            padding: '5px 12px 5px 6px',
-            backgroundColor: '#1C242B',
-            border: '1px solid rgba(212, 175, 55, 0.18)',
-            borderRadius: 99,
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.5)';
-            e.currentTarget.style.backgroundColor = '#222C35';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.18)';
-            e.currentTarget.style.backgroundColor = '#1C242B';
+            justifyContent: 'center',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            color: '#FFFFFF',
           }}
         >
-          <div
-            style={{
-              width: 26,
-              height: 26,
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '1px solid rgba(212, 175, 55, 0.6)',
-              boxShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
-              flexShrink: 0,
-            }}
-          >
-            <img
-              src="/michael-logo.png"
-              alt="Michael Avatar"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </div>
-          <span
-            className="font-subheading"
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 600,
-              color: '#FAF9F5',
-              letterSpacing: '0.02em',
-            }}
-          >
-            MICHAEL v1.0
-          </span>
-          <ChevronDown size={13} color="#D4AF37" />
+          M
         </div>
       </div>
     </header>

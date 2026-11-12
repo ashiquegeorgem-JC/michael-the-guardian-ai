@@ -9,6 +9,7 @@ import {
   Radio,
   Database,
   ArrowRight,
+  ExternalLink,
 } from 'lucide-react';
 import { AttackChain } from '@/types';
 
@@ -22,137 +23,124 @@ const STAGES_PIPELINE = [
     code: 'T1190',
     title: 'Initial Access',
     icon: Laptop,
-    accent: '#D4AF37',
-    border: 'rgba(212, 175, 55, 0.4)',
-    bg: 'rgba(212, 175, 55, 0.12)',
+    accent: '#38BDF8',
   },
   {
     code: 'T1110',
     title: 'Credential Access',
     icon: Lock,
-    accent: '#E5C07B',
-    border: 'rgba(229, 192, 123, 0.4)',
-    bg: 'rgba(229, 192, 123, 0.12)',
+    accent: '#FBBF24',
   },
   {
     code: 'T1059',
     title: 'Execution',
     icon: Code2,
-    accent: '#38BDF8',
-    border: 'rgba(56, 189, 248, 0.4)',
-    bg: 'rgba(56, 189, 248, 0.12)',
+    accent: '#A78BFA',
   },
   {
     code: 'T1071',
     title: 'Command & Control',
     icon: Radio,
-    accent: '#A78BFA',
-    border: 'rgba(167, 139, 250, 0.4)',
-    bg: 'rgba(167, 139, 250, 0.12)',
+    accent: '#F472B6',
   },
   {
     code: 'T1041',
     title: 'Exfiltration',
     icon: Database,
-    accent: '#EF4444',
-    border: 'rgba(239, 68, 68, 0.4)',
-    bg: 'rgba(239, 68, 68, 0.12)',
+    accent: '#F87171',
   },
 ];
 
-export function AttackChainFlow({ chains, isLoading = false }: AttackChainFlowProps) {
+export function AttackChainFlow({ chains, isLoading }: AttackChainFlowProps) {
+  const activeChain = chains && chains.length > 0 ? chains[0] : null;
+
   return (
     <div
       style={{
-        backgroundColor: '#1C242B',
-        border: '1px solid rgba(212, 175, 55, 0.14)',
-        borderRadius: '14px',
-        padding: '24px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#11161E',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: '24px 28px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
       }}
-      className="space-y-5 font-sans h-full flex flex-col justify-between"
+      className="flex flex-col justify-between font-sans w-full"
     >
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(212,175,55,0.1)] pb-4">
+      <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-5">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-base font-semibold text-[#FAF9F5] font-heading">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-white font-heading">
               Attack Chain Reconstruction
             </h2>
-            <span
-              style={{
-                backgroundColor: 'rgba(212, 175, 55, 0.12)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                color: '#D4AF37',
-              }}
-              className="text-[10px] font-subheading px-2.5 py-0.5 rounded-full font-semibold"
-            >
+            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/[0.06] text-[#94A3B8] border border-white/[0.08]">
               MITRE ATT&CK
             </span>
           </div>
-          <p className="text-xs text-[#D1CBC0] font-subheading font-light mt-1">
-            Correlated event sequence and MITRE attack stages
+          <p className="text-xs text-[#94A3B8] font-subheading mt-0.5 leading-relaxed">
+            Automated multi-stage temporal correlation<br />and adversary progression mapping
           </p>
         </div>
 
         <Link
           href="/attack-chains"
-          className="text-xs text-[#D4AF37] hover:text-[#E5C07B] flex items-center gap-1.5 transition-colors font-subheading font-medium"
+          className="text-xs text-[#94A3B8] hover:text-white flex items-center gap-1 transition-colors"
         >
-          <span>View Details</span>
-          <ArrowRight className="h-3.5 w-3.5" />
+          <span>Interactive Graph</span>
+          <ExternalLink size={12} />
         </Link>
       </div>
 
-      {/* Connected 5-Stage Pipeline */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto py-2">
+      {/* 5-Stage Minimalist Progression */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 relative">
         {STAGES_PIPELINE.map((stage, idx) => {
           const Icon = stage.icon;
-          const isLast = idx === STAGES_PIPELINE.length - 1;
+          const isTarget = activeChain ? idx <= ((activeChain.stages_observed?.length ?? 0) || 2) : idx < 3;
 
           return (
-            <React.Fragment key={stage.code}>
-              <div
-                style={{
-                  backgroundColor: stage.bg,
-                  border: `1px solid ${stage.border}`,
-                  boxShadow: `0 0 16px ${stage.accent}15`,
-                }}
-                className="flex-1 min-w-[120px] rounded-xl p-3.5 flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]"
-              >
+            <div
+              key={stage.code}
+              style={{
+                backgroundColor: isTarget ? '#161D26' : '#0D1117',
+                border: isTarget
+                  ? '1px solid rgba(255, 255, 255, 0.12)'
+                  : '1px solid rgba(255, 255, 255, 0.04)',
+                borderRadius: 8,
+                padding: '14px 16px',
+              }}
+              className="flex flex-col justify-between transition-colors relative"
+            >
+              <div className="flex items-center justify-between mb-2">
                 <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center mb-2"
                   style={{
-                    backgroundColor: `${stage.accent}20`,
                     color: stage.accent,
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    padding: 6,
+                    borderRadius: 6,
                   }}
                 >
-                  <Icon size={16} color={stage.accent} />
+                  <Icon size={16} />
                 </div>
-
-                <div className="text-xs font-semibold text-[#FAF9F5] font-subheading leading-snug">
-                  {stage.title}
-                </div>
-
-                <div
-                  className="font-mono text-[10px] mt-1 font-medium tracking-wider"
-                  style={{ color: stage.accent }}
-                >
-                  {stage.code}
-                </div>
+                <span className="font-mono text-[11px] text-[#64748B]">{stage.code}</span>
               </div>
 
-              {!isLast && (
-                <div className="shrink-0 text-[#8E877D] px-0.5">
-                  <ArrowRight size={14} className="opacity-60" />
+              <div>
+                <h4 className="text-xs font-semibold text-white tracking-tight">
+                  {stage.title}
+                </h4>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: isTarget ? stage.accent : '#475569' }}
+                  />
+                  <span className="text-[11px] font-subheading text-[#94A3B8]">
+                    {isTarget ? 'Correlated' : 'Inactive'}
+                  </span>
                 </div>
-              )}
-            </React.Fragment>
+              </div>
+            </div>
           );
         })}
       </div>
     </div>
   );
 }
-
-export const AttackChainReconstruction = AttackChainFlow;

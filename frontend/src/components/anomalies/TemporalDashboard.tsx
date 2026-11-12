@@ -9,6 +9,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { chartTooltipProps } from '@/lib/chartTheme';
 import {
   Activity, AlertTriangle, Clock, Globe, Server,
   Zap, TrendingUp, RefreshCw, Shield, Radio,
@@ -118,9 +119,10 @@ function GlobalTrafficChart({ globalWindows }: { globalWindows: Record<string, W
           <XAxis dataKey="window" tick={{ fill: '#94a3b8', fontSize: 11 }} />
           <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
           <Tooltip
-            contentStyle={{ background: '#0F1629', border: '1px solid #1E2D4A', borderRadius: 8, fontSize: 11 }}
-            itemStyle={{ color: '#94a3b8' }}
-            labelStyle={{ color: '#e2e8f0', fontWeight: 600 }}
+            contentStyle={chartTooltipProps.contentStyle}
+            labelStyle={chartTooltipProps.labelStyle}
+            itemStyle={chartTooltipProps.itemStyle}
+            cursor={chartTooltipProps.cursor}
           />
           <ReferenceLine y={3} stroke="#ef4444" strokeDasharray="4 4" label={{ value: 'Z=3 Threshold', fill: '#ef4444', fontSize: 10 }} />
           <Bar dataKey="z_score" fill="#6366f1" radius={[4, 4, 0, 0]} name="Z-Score" />
@@ -167,8 +169,10 @@ function FrequencyTimelineChart({ globalWindows }: { globalWindows: Record<strin
           <XAxis dataKey="bucket" tick={{ fill: '#94a3b8', fontSize: 10 }} />
           <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} />
           <Tooltip
-            contentStyle={{ background: '#0F1629', border: '1px solid #1E2D4A', borderRadius: 8, fontSize: 11 }}
-            itemStyle={{ color: '#94a3b8' }}
+            contentStyle={chartTooltipProps.contentStyle}
+            labelStyle={chartTooltipProps.labelStyle}
+            itemStyle={chartTooltipProps.itemStyle}
+            cursor={chartTooltipProps.cursor}
           />
           <ReferenceLine y={stats.mean} stroke="#4ade80" strokeDasharray="3 3" label={{ value: 'Mean', fill: '#4ade80', fontSize: 10 }} />
           <Area dataKey="count" stroke="#f59e0b" fill="url(#countGrad)" strokeWidth={2} name="Events/Window" dot={false} />
@@ -224,8 +228,10 @@ function HttpErrorRateChart({ buckets }: { buckets: Array<{ bucket_minute: numbe
           <XAxis dataKey="minute" tick={{ fill: '#94a3b8', fontSize: 11 }} />
           <YAxis unit="%" tick={{ fill: '#94a3b8', fontSize: 11 }} domain={[0, 100]} />
           <Tooltip
-            contentStyle={{ background: '#0F1629', border: '1px solid #1E2D4A', borderRadius: 8, fontSize: 11 }}
-            itemStyle={{ color: '#94a3b8' }}
+            contentStyle={chartTooltipProps.contentStyle}
+            labelStyle={chartTooltipProps.labelStyle}
+            itemStyle={chartTooltipProps.itemStyle}
+            cursor={chartTooltipProps.cursor}
             formatter={(val) => [`${val}%`, 'Error Rate']}
           />
           <ReferenceLine y={50} stroke="#ef4444" strokeDasharray="4 4" label={{ value: '50% threshold', fill: '#ef4444', fontSize: 10 }} />
