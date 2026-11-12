@@ -65,12 +65,22 @@ app = FastAPI(
 # add_middleware here ensures OPTIONS preflight requests are handled correctly
 # before the router layer is reached.
 
+PROD_FRONTEND_ORIGIN = "https://frontend-ten-nu-87.vercel.app"
+
+
 def _build_allowed_origins() -> list[str]:
     """
     Build the explicit allowed-origins list from multiple sources:
-      1. settings.ALLOWED_ORIGINS  (default: localhost:3000 for local dev)
-      2. settings.FRONTEND_URL     (set FRONTEND_URL env var on Render/Vercel)
-      3. ADDITIONAL_ALLOWED_ORIGINS env var (comma-separated, for future deployments)
+      1. PROD_FRONTEND_ORIGIN      (guaranteed inclusion of production Vercel domain)
+      2. Localhost dev origins     (http://localhost:3000, http://127.0.0.1:3000)
+      3. settings.ALLOWED_ORIGINS  (env: ALLOWED_ORIGINS, comma-separated)
+      4. settings.FRONTEND_URL     (env: FRONTEND_URL on Render)
+      5. ADDITIONAL_ALLOWED_ORIGINS env var (comma-separated, for future deployments)
+
+    SECURITY NOTE:
+      Wildcard '*' is strictly filtered out because browsers reject
+      'Access-Control-Allow-Origin: *' when 'Access-Control-Allow-Credentials: true'
+      is present, causing browsers to block requests with 403 Forbidden.
 
     The regex pattern below additionally covers:
       - Any *.vercel.app preview deployment (https)
@@ -81,24 +91,35 @@ def _build_allowed_origins() -> list[str]:
     origins: list[str] = []
 
     def _add(url: str) -> None:
+        if not url:
+            return
         url = url.strip().rstrip("/")
-        if url and url not in seen:
+        # Strictly reject wildcard '*': browsers forbid Access-Control-Allow-Origin: *
+        # when Access-Control-Allow-Credentials: true is configured.
+        if url and url != "*" and url not in seen:
             seen.add(url)
             origins.append(url)
 
-    # 1. Base list from settings (env: ALLOWED_ORIGINS, comma-separated)
+    # 1. Guarantee production Vercel frontend is always in the allow-list
+    _add(PROD_FRONTEND_ORIGIN)
+
+    # 2. Localhost development origins
+    _add("http://localhost:3000")
+    _add("http://127.0.0.1:3000")
+
+    # 3. Base list from settings / env (filtering out any '*')
     for o in settings.ALLOWED_ORIGINS:
         _add(o)
 
-    # 2. Primary production frontend URL (env: FRONTEND_URL on Render)
+    # 4. Primary production frontend URL from env / settings
     if settings.FRONTEND_URL:
         _add(settings.FRONTEND_URL)
 
-    # 3. Extra origins (env: ADDITIONAL_ALLOWED_ORIGINS, comma-separated)
+    # 5. Extra origins (env: ADDITIONAL_ALLOWED_ORIGINS, comma-separated)
     for o in os.getenv("ADDITIONAL_ALLOWED_ORIGINS", "").split(","):
         _add(o)
 
-    logger.info("CORS explicit allow-list (%d origins): %s", len(origins), origins)
+    logger.info("CORS explicit allow-list (%d origins, wildcard excluded): %s", len(origins), origins)
     return origins
 
 
