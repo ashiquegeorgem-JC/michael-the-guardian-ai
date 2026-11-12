@@ -24,7 +24,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from sqlalchemy.pool import QueuePool, StaticPool
 
 from app.config import settings
-from app.persistence.models import Base
+from app.persistence.models import Base, DBSession
 
 logger = logging.getLogger("michael.persistence.database")
 
@@ -144,6 +144,11 @@ class DatabaseManager:
 
     def init_db(self) -> bool:
         """Create all tables if they do not exist."""
+        backend = getattr(settings, "PERSISTENCE_BACKEND", "memory").lower()
+        if backend == "memory" and not self.get_database_url():
+            logger.info("In-memory persistence active; skipping relational schema creation.")
+            return True
+
         engine = self.get_engine()
         if engine is None:
             return False

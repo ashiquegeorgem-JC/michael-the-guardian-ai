@@ -43,9 +43,26 @@ if _runtime_port != 8000:
 async def lifespan(app: FastAPI):
     """Application lifespan: startup and shutdown events."""
     logger.info("🚀 MICHAEL - The Guardian AI is starting up...")
+
     # Create uploads directory if needed
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+
+    # Initialize database schema (creates tables if they do not exist)
+    try:
+        if db_manager.init_db():
+            logger.info("Database schema initialized successfully.")
+        else:
+            logger.error("Database schema initialization failed.")
+    except Exception as exc:
+        logger.exception("Database initialization error: %s", exc)
+
     yield
+
+    try:
+        db_manager.close()
+    except Exception as exc:
+        logger.warning("Database shutdown error: %s", exc)
+
     logger.info("🛑 MICHAEL - The Guardian AI is shutting down.")
 
 
