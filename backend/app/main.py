@@ -83,10 +83,24 @@ async def api_redoc_redirect():
     """Redirect /api/redoc to /redoc for backwards compatibility."""
     return RedirectResponse(url="/redoc")
 
-# CORS
+# CORS configuration: support local dev + production frontend origins via env and regex
+def get_allowed_origins() -> list[str]:
+    origins = list(settings.ALLOWED_ORIGINS)
+    frontend_url = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+    if frontend_url and frontend_url not in origins:
+        origins.append(frontend_url)
+    custom_origins = os.getenv("ADDITIONAL_ALLOWED_ORIGINS", "")
+    if custom_origins:
+        for orig in custom_origins.split(","):
+            cleaned = orig.strip().rstrip("/")
+            if cleaned and cleaned not in origins:
+                origins.append(cleaned)
+    return origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=get_allowed_origins(),
+    allow_origin_regex=r"https://.*\.vercel\.app|https://.*\.onrender\.com|http://localhost:\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

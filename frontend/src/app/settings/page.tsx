@@ -42,14 +42,14 @@ export default function SettingsPage() {
   const [sessionTimeout, setSessionTimeout] = useState('60');
   const [logRetentionDays, setLogRetentionDays] = useState('365');
   const [vtApiKey, setVtApiKey] = useState('vt_sec_prod_994a8c2f1e449b');
-  const [wsPort, setWsPort] = useState('8000');
+  const [wsPort, setWsPort] = useState('443');
   const [autoPurge, setAutoPurge] = useState(false);
   const [mTLSEnforced, setMTLSEnforced] = useState(true);
 
   useEffect(() => {
     checkHealth()
       .then((res) => setBackendHealth(`${res.status.toUpperCase()} (${res.service})`))
-      .catch(() => setBackendHealth('Online (Port 8000)'));
+      .catch(() => setBackendHealth('Connecting to Backend...'));
   }, []);
 
   const handleSave = () => {

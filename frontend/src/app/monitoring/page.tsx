@@ -104,7 +104,7 @@ export default function MonitoringPage() {
           title="Live Monitoring & Telemetry"
           description="Real-time host daemon telemetry, ingestion velocity, socket broadcast health, and distributed subsystem utilization."
           statusList={[
-            { label: connected ? 'WebSocket: Streaming (8000)' : 'WebSocket: Polling', status: connected ? 'online' : 'warning' },
+            { label: connected ? 'WebSocket: Streaming (WSS)' : 'WebSocket: Polling', status: connected ? 'online' : 'warning' },
             { label: `${eps} Events/Sec Ingestion`, status: 'active' },
             { label: 'Host Daemon: Normal', status: 'online' },
           ]}

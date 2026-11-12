@@ -95,7 +95,7 @@ export default function ReportsPage() {
     try {
       const sessId = selectedSession || (sessions[0]?.id ?? 'sess-default');
       const res = await generateReport(sessId, reportTitle);
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'https://michael-the-guardian-ai.onrender.com').replace(/\/+$/, '');
       setGeneratedReport({
         id: res.report_id,
         filename: res.filename,
