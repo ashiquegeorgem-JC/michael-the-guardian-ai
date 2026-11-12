@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     # App
     APP_ENV: str = "development"
     APP_SECRET_KEY: str = "dev-secret-key-change-in-production"
+    PORT: int = int(os.getenv("PORT", "8000"))
 
     # CORS
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]

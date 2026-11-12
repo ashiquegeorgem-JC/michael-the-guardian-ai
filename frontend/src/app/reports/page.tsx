@@ -381,42 +381,42 @@ During the evaluated monitoring interval, MICHAEL's autonomous multi-stage detec
           </div>
         </div>
 
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex items-center gap-2.5 pt-2">
           <input
             type="checkbox"
             id="includeLogs"
             checked={includeLogs}
             onChange={(e) => setIncludeLogs(e.target.checked)}
-            className="w-4 h-4 rounded bg-[#080B0F] border border-white/20 text-[#38BDF8] cursor-pointer"
+            className="w-4 h-4 rounded bg-[#080B0F] border border-white/20 text-[#38BDF8] cursor-pointer shrink-0"
           />
-          <label htmlFor="includeLogs" className="text-xs text-[#94A3B8] cursor-pointer font-subheading">
+          <label htmlFor="includeLogs" className="text-xs text-[#94A3B8] cursor-pointer font-subheading select-none">
             Attach raw syslog evidentiary excerpts and Isolation Forest outlier timestamps
           </label>
         </div>
 
-        <div className="pt-2 flex items-center gap-4">
+        <div className="pt-2 flex items-center gap-3">
           <button
             onClick={handleGenerate}
             disabled={isGenerating}
             style={{
               backgroundColor: '#162030',
-              border: '1px solid rgba(56, 189, 248, 0.4)',
+              border: '1px solid rgba(56, 189, 248, 0.35)',
               color: '#38BDF8',
-              borderRadius: 8,
-              padding: '6px 14px',
-              fontSize: '0.75rem',
+              borderRadius: 6,
+              padding: '5px 12px',
+              fontSize: '0.70rem',
               fontWeight: 500,
             }}
-            className="flex items-center gap-2 hover:bg-[#1C283E] transition-all cursor-pointer disabled:opacity-50 font-sans"
+            className="flex items-center gap-1.5 hover:bg-[#1C283E] transition-all cursor-pointer disabled:opacity-50 font-sans tracking-wide"
           >
             {isGenerating ? (
               <>
-                <RefreshCw size={14} className="animate-spin" />
+                <RefreshCw size={12} className="animate-spin" />
                 <span>Compiling Audit Package...</span>
               </>
             ) : (
               <>
-                <FileText size={14} />
+                <FileText size={12} />
                 <span>Generate Executive Audit Report</span>
               </>
             )}
@@ -433,14 +433,14 @@ During the evaluated monitoring interval, MICHAEL's autonomous multi-stage detec
               style={{
                 backgroundColor: '#10B981',
                 color: '#07090E',
-                borderRadius: 8,
-                padding: '6px 14px',
+                borderRadius: 6,
+                padding: '5px 12px',
                 fontWeight: 600,
-                fontSize: '0.75rem',
+                fontSize: '0.70rem',
               }}
-              className="flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer font-sans"
+              className="flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer font-sans tracking-wide"
             >
-              <Download size={14} />
+              <Download size={12} />
               <span>Download Generated File</span>
             </button>
           )}

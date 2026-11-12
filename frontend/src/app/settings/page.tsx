@@ -146,15 +146,14 @@ export default function SettingsPage() {
         </div>
       </Section>
 
-      {/* ── 2. CONFIGURATION GRID (2 × 2) ─────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+      {/* ── 2. CONFIGURATION PANELS (FULL-WIDTH LANDSCAPE STACK) ───────── */}
+      <div className="flex flex-col gap-6 w-full">
         {/* ── Panel 1: Platform Identity & Session Windows ── */}
         <Section
           title="Platform Identity & Session Windows"
           subtitle="Configure local instance hostname, session thresholds, and compliance retention"
-          className="h-full flex flex-col justify-between"
         >
-          <div className="space-y-5 text-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center text-xs">
             <div className="space-y-1.5">
               <label className="block text-[#94A3B8] font-subheading font-medium">
                 SOC Platform Identifier
@@ -208,7 +207,7 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={autoPurge}
                 onChange={(e) => setAutoPurge(e.target.checked)}
-                className="w-4 h-4 rounded bg-[#080B0F] border border-white/20 text-[#38BDF8] cursor-pointer"
+                className="w-4 h-4 rounded bg-[#080B0F] border border-white/20 text-[#38BDF8] cursor-pointer ml-3 shrink-0"
               />
             </div>
           </div>
@@ -218,10 +217,9 @@ export default function SettingsPage() {
         <Section
           title="Isolation Forest Hyperparameters"
           subtitle="Fine-tune unsupervised model decision trees and anomaly score cutoff thresholds"
-          className="h-full flex flex-col justify-between"
         >
-          <div className="space-y-5 text-xs">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+            <div className="space-y-2.5 bg-[#080B0F] border border-white/[0.05] p-4 rounded-lg">
               <div className="flex justify-between items-center">
                 <span className="text-[#94A3B8] font-subheading">Contamination Ratio (c)</span>
                 <span className="font-mono text-[#38BDF8] font-semibold text-xs px-2 py-0.5 rounded bg-[#38BDF8]/10 border border-[#38BDF8]/20">
@@ -237,9 +235,10 @@ export default function SettingsPage() {
                 onChange={(e) => setContamination(parseFloat(e.target.value))}
                 className="w-full h-1.5 bg-white/[0.08] rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
               />
+              <span className="text-[10px] text-[#64748B] block">Expected proportion of outliers in the training set</span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5 bg-[#080B0F] border border-white/[0.05] p-4 rounded-lg">
               <div className="flex justify-between items-center">
                 <span className="text-[#94A3B8] font-subheading">Ensemble Estimators (n_estimators)</span>
                 <span className="font-mono text-[#38BDF8] font-semibold text-xs px-2 py-0.5 rounded bg-[#38BDF8]/10 border border-[#38BDF8]/20">
@@ -255,9 +254,10 @@ export default function SettingsPage() {
                 onChange={(e) => setNEstimators(parseInt(e.target.value))}
                 className="w-full h-1.5 bg-white/[0.08] rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
               />
+              <span className="text-[10px] text-[#64748B] block">Number of Isolation Forest decision trees in ensemble</span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5 bg-[#080B0F] border border-white/[0.05] p-4 rounded-lg">
               <div className="flex justify-between items-center">
                 <span className="text-[#94A3B8] font-subheading">Anomaly Classification Threshold</span>
                 <span className="font-mono text-[#38BDF8] font-semibold text-xs px-2 py-0.5 rounded bg-[#38BDF8]/10 border border-[#38BDF8]/20">
@@ -273,6 +273,7 @@ export default function SettingsPage() {
                 onChange={(e) => setThreshold(parseFloat(e.target.value))}
                 className="w-full h-1.5 bg-white/[0.08] rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
               />
+              <span className="text-[10px] text-[#64748B] block">Score boundary above which logs are flagged anomalous</span>
             </div>
           </div>
         </Section>
@@ -281,9 +282,8 @@ export default function SettingsPage() {
         <Section
           title="Threat Intelligence Provider API Keys"
           subtitle="External reputation enrichers and VirusTotal v3 verification credentials"
-          className="h-full flex flex-col justify-between"
         >
-          <div className="space-y-5 text-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center text-xs">
             <div className="space-y-1.5">
               <label className="block text-[#94A3B8] font-subheading font-medium">
                 VirusTotal v3 Enterprise API Key
@@ -315,9 +315,8 @@ export default function SettingsPage() {
         <Section
           title="Network Daemon & Ingestion Security"
           subtitle="WebSocket broadcast security and administrative transport layers"
-          className="h-full flex flex-col justify-between"
         >
-          <div className="space-y-5 text-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center text-xs">
             <div className="space-y-1.5">
               <label className="block text-[#94A3B8] font-subheading font-medium">
                 WebSocket Broadcast Port
@@ -339,7 +338,7 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={mTLSEnforced}
                 onChange={(e) => setMTLSEnforced(e.target.checked)}
-                className="w-4 h-4 rounded bg-[#080B0F] border border-white/20 text-[#38BDF8] cursor-pointer"
+                className="w-4 h-4 rounded bg-[#080B0F] border border-white/20 text-[#38BDF8] cursor-pointer ml-3 shrink-0"
               />
             </div>
           </div>

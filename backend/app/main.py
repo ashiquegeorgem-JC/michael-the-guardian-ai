@@ -24,6 +24,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger("michael")
 
+# Dynamic PORT synchronization (for cloud providers like Render that inject PORT dynamically)
+_runtime_port = int(os.getenv("PORT", str(settings.PORT)))
+if _runtime_port != 8000:
+    try:
+        import gc
+        import uvicorn
+        for _obj in gc.get_objects():
+            if isinstance(_obj, uvicorn.Config) and _obj.port == 8000:
+                _obj.port = _runtime_port
+                logger.info("Synchronized Uvicorn port with environment PORT: %d", _runtime_port)
+    except Exception:
+        pass
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -115,10 +128,11 @@ async def ready_check(response: Response):
 
 if __name__ == "__main__":
     import uvicorn
+    port = int(os.getenv("PORT", str(settings.PORT)))
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=settings.APP_ENV == "development",
         log_level="info",
     )
