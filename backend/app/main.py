@@ -4,6 +4,7 @@ FastAPI Backend - Main Application Entry Point
 """
 
 from fastapi import FastAPI, Response, status
+from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
@@ -52,10 +53,35 @@ app = FastAPI(
     title="MICHAEL – The Guardian AI",
     description="Intelligent Log Analysis and Anomaly Detection Platform",
     version="1.0.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
     lifespan=lifespan,
 )
+
+# Root endpoint & documentation redirects
+@app.get("/", tags=["Root"])
+async def root():
+    """Root health and discovery endpoint."""
+    return {
+        "status": "operational",
+        "service": "MICHAEL – The Guardian AI",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "openapi": "/openapi.json",
+    }
+
+
+@app.get("/api/docs", include_in_schema=False)
+async def api_docs_redirect():
+    """Redirect /api/docs to /docs for backwards compatibility."""
+    return RedirectResponse(url="/docs")
+
+
+@app.get("/api/redoc", include_in_schema=False)
+async def api_redoc_redirect():
+    """Redirect /api/redoc to /redoc for backwards compatibility."""
+    return RedirectResponse(url="/redoc")
 
 # CORS
 app.add_middleware(
